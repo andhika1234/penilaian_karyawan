@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/master}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit User</title>
+
+</head>
+<th:block layout:fragment="page_css">
+    <link th:href="@{/dist/libs/select2baru/dist/css/select2.min.css}" rel="stylesheet" type="text/css"/>
+    <style>
+            .select2-results .select2-disabled,  .select2-results__option[aria-disabled=true] {
+                display: none;
+            }
+
+
+    </style>
+</th:block>
+<body class="" data-layout-color="light" data-layout-mode="default" data-layout-size="fluid" data-topbar-color="light"
+      data-leftbar-position="fixed" data-leftbar-color="light" data-leftbar-size="default" data-sidebar-user="true">
+
+
+<th:block layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="col-md-4">
+
+
+                        </div>
+
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a th:href="@{/home}">Beranda</a></li>
+                                <li class="breadcrumb-item"><a th:href="@{/user}">User</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Edit User</li>
+                            </ol>
+                        </nav>
+                    </div>
+
+                </div>
+            </div> <!-- end card -->
+        </div><!-- end col-->
+    </div>
+    <!-- end row -->
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <form class="form-horizontal parsley-examples" role="form"
+                          id="form-i"
+                          th:action="@{'/user/update/'+${user?.getId()}}"
+                          th:object="${user}"
+                          method="post"
+                          enctype="multipart/form-data"
+                          autocomplete="off">
+
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="Username" class="form-label">Username <span style="color:red;">*</span></label>
+                                <input type="text" class="form-control" id="Username" placeholder="Username"  th:field="*{username}">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="Email" class="form-label">Email <span style="color:red;">*</span></label>
+                                <input type="email" class="form-control" id="Email" placeholder="Email" th:field="*{email}" >
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="frontName" class="form-label">Nama  <span style="color:red;">*</span></label>
+                                <input type="text" class="form-control" id="frontName" placeholder="Nama " th:field="*{name}" >
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="frontName" class="form-label">Jenis Sekolah  <span style="color:red;">*</span></label>
+                                <input type="text" class="form-control" id="jenissekolah" placeholder="SMK " readonly name="jenisSekolah">
+                            </div>
+                        </div>
+
+
+
+<!--                        <div class="row">-->
+<!--                            <div class="mb-3">-->
+<!--                                <label for="jenisSumberDana" class="form-label">Program Sekolah <span style="color:red;">*</span></label>-->
+<!--                                <select class="form-select select2" id="jenisSumberDana" data-width="100%" th:field="*{programSekolah}" required>-->
+<!--                                    <option th:value="${''}">&#45;&#45;pilih&#45;&#45;</option>-->
+<!--                                    <option th:each="k: ${programSekolahList}" th:text="${k.getNamaProgram()}"-->
+<!--                                            th:value="${k.getId()}">-->
+<!--                                    </option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+
+
+
+
+
+     <br>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-content-save"></i> Simpan</button>
+                        <button type="button" class="btn btn-dark waves-effect waves-light" onclick="goBack()"><i class="mdi mdi-undo"></i> Batal</button>
+
+                    </form>
+
+                </div> <!-- end card-body -->
+            </div> <!-- end card-->
+        </div> <!-- end col -->
+    </div>
+
+
+</th:block>
+
+
+<th:block layout:fragment="page_js">
+
+    <script th:src="@{/dist/libs/select2baru/dist/js/select2.min.js}" type="text/javascript"></script>
+
+    <script th:src="@{/dist/libs/jquery-validation-1.19.1/dist/jquery.validate.min.js}" type="text/javascript"></script>
+    <script th:src="@{/dist/libs/jquery-validation-1.19.1/dist/additional-methods.js}" type="text/javascript"></script>
+    <script>
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+
+    </script>
+    <script type="text/javascript" th:inline="javascript">
+
+        $.validator.addMethod("strongPassword", function (value, element) {
+              //Panjang minimal 8 karakter, maksimal 50 karakter, dengan minimal 1 huruf besar, 1 huruf kecil, 1 angka, dan 1 karakter spesial
+              const regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$^+=!*()@%&]).{8,50}$");
+              console.log("hasil " + value + ": " + regex.test(value));
+              return regex.test(value);
+          }, "Password harus minimal terdiri dari 8 character. Dan mengandung huruf besar, huruf kecil, angka dan karakter spesial(misal: !@#$%^&*).");
+
+
+          $( document ).ready( function () {
+
+              $( "#form-i" ).validate( {
+
+
+                  rules: {
+                      webiste: {
+                          TagHTML:true,
+                          url: true,
+
+                      },
+
+                       faximile: {
+
+                          TagHTML:true,
+
+                      },
+
+                      telepon: {
+                      required: true,
+                          TagHTML:true,
+                      },
+
+
+                      kodePos:{
+
+                          required: true,
+                          TagHTML:true,
+
+                      },
+
+
+                       password: {
+                          required: true,
+                          minlength: 8,
+                          strongPassword: true,
+                      },
+
+
+                       konfirmasiPassword: {
+                          required: true,
+                          equalTo: "#password"
+                      },
+
+
+
+
+                  },
+                  messages: {
+                      telepon:{
+                          required :"Masukan Telepon Sekolah",
+                      },
+
+                      kodePos:{
+                          required:"Masukan Kode Pos Alamat Sekolah",
+                      },
+
+
+
+
+
+                  },
+                  errorElement: "em",
+                  errorPlacement: function ( error, element ) {
+                      // Add the `invalid-feedback` class to the error element
+                      error.addClass( "invalid-feedback" );
+
+                      if ( element.prop( "type" ) === "checkbox" ) {
+                          error.insertAfter( element.next( "label" ) );
+                      } else {
+                          error.insertAfter( element );
+                      }
+                  },
+                  highlight: function ( element, errorClass, validClass ) {
+                      $( element ).addClass( "is-invalid" ).removeClass( "is-valid" );
+                  },
+                  unhighlight: function (element, errorClass, validClass) {
+                      $( element ).addClass( "is-valid" ).removeClass( "is-invalid" );
+                  }
+              } );
+
+
+              $.validator.addMethod("TagHTML", function( value, element ) {
+              var regex = new RegExp("<.[^<>]*?>");
+              var key = value;
+
+              if (!regex.test(key)) {
+                 return true;
+              }
+              return false;
+              }, "mohon jangan gunakan tag html");
+
+              jQuery.validator.addMethod("specialChars", function( value, element ) {
+              var regex = new RegExp("^[a-zA-Z0-9]+$");
+              var key = value;
+
+              if (!regex.test(key)) {
+                 return false;
+              }
+              return true;
+          }, "please use only alphanumeric or alphabetic characters");
+
+          });
+
+
+    </script>
+
+
+
+</th:block>
+</body>
+</html>

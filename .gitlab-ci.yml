@@ -1,0 +1,51 @@
+stages:
+  - build
+  - run
+  - deploy
+
+# Build job
+build_job:
+  stage: build
+  script:
+    - echo "Changing directory to /home/appserv/ladia..."
+    - cd /home/appserv/ladia
+    - echo "Pulling the repository..."
+    - git pull origin main
+    - echo "Building the project...."
+    - mvn clean package
+  only:
+    - main
+  tags:
+    - ladia
+
+# Run job
+run_job:
+  stage: run
+  script:
+    - echo "Changing directory to /home/appserv/ladia..."
+    - cd /home/appserv/ladia
+    - echo "Stopping the existing application...."
+    - JAR_FILE=$(ls target/*.jar)
+    - if [ -z "$JAR_FILE" ]; then echo "No JAR file found!"; exit 1; fi
+    - PIDS=$(pgrep -f "$JAR_FILE")
+    - if [ -n "$PIDS" ]; then sudo kill -9 $PIDS; fi
+    - echo "Starting the application..."
+    - nohup java -jar "$JAR_FILE" > /dev/null 2>&1 &
+  only:
+    - main
+  tags:
+    - ladia
+
+# Deploy job
+deploy_job:
+  stage: deploy
+  script:
+    - echo "Changing directory to /home/appserv/ladia...."
+    - cd /home/appserv/ladia
+    - echo "Deploying the project..."
+    # Add deployment commands here, e.g.:
+    # - scp target/*.jar user@server:/path/to/deploy
+  only:
+    - main
+  tags:
+    - ladia

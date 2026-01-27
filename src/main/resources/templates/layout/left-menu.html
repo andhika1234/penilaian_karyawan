@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<div class="left-side-menu">
+
+    <div class="h-100 show" data-simplebar="init">
+        <div class="simplebar-wrapper" style="margin: 0px;">
+            <div class="simplebar-height-auto-observer-wrapper">
+                <div class="simplebar-height-auto-observer">
+
+                </div>
+            </div>
+            <div class="simplebar-mask menuitem-active">
+                <div class="simplebar-offset show" style="right: 0px; bottom: 0px;">
+                    <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: 100%; overflow: hidden scroll;">
+                        <div class="simplebar-content menuitem-active" style="padding: 0px;">
+                            <div class="user-box text-center">
+                                <a th:href="@{/landing}">
+                                    <img th:src="@{/dist/images/penilaiankaryawan.png}" alt="tutwuri-img" height="80"
+                                         title="Tutwuri Handayani" class="rounded-circle img-thumbnail avatar-md">
+                                </a>
+                            </div>
+
+                            <div id="sidebar-menu" class="show">
+                                    <ul id="side-menu">
+                                        <li class="menu-title">Menu</li>
+                                        <li class="menuitem">
+                                            <a th:href="@{/}" >
+                                                <i class="ti ti-device-analytics"></i>
+                                                <span class="badge bg-success rounded-pill float-end"></span>
+                                                <span>Beranda</span>
+                                            </a>
+                                        </li>
+
+
+                                        <li class="menuitem" sec:authorize="hasRole('Admin')">
+                                            <a href="#masterData" data-bs-toggle="collapse">
+                                                <i class="ti ti-layout-kanban"></i>
+                                                <span>Master Data</span>
+                                                <span class="menu-arrow"></span>
+                                            </a>
+                                            <div class="collapse" id="masterData">
+                                                <ul class="nav-second-level">
+                                                    <li>
+                                                        <a th:href="@{/karyawan}">
+                                                            <i class="ti ti-users"></i>
+                                                            <span>Karyawan</span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a th:href="@{/divisi}">
+                                                            <i class="ti ti-building"></i>
+                                                            <span>Divisi</span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a th:href="@{/kriteria}">
+                                                            <i class="ti ti-checklist"></i>
+                                                            <span>Kriteria Penilaian</span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a th:href="@{/jabatan}">
+                                                            <i class="ti ti-id-badge"></i>
+                                                            <span>Jabatan</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+
+
+                                        <li class="menuitem" sec:authorize="hasRole('Admin')">
+                                            <a href="#penilaian" data-bs-toggle="collapse">
+                                                <i class="ti ti-briefcase"></i>
+                                                <span>Penilaian</span>
+                                                <span class="menu-arrow"></span>
+                                            </a>
+                                            <div class="collapse" id="penilaian">
+                                                <ul class="nav-second-level">
+                                                    <li>
+                                                        <a th:href="@{/penilaiankaryawan}">
+                                                            <i class="ti ti-file-check"></i>
+                                                            <span>Penilaian Karyawan</span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a th:href="@{/pengumumanperingkat}">
+                                                            <i class="ti ti-trophy"></i>
+                                                            <span>Pengumuman Peringkat</span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a th:href="@{/rekaptahunan}">
+                                                            <i class="ti ti-calendar-stats"></i>
+                                                            <span>Rekap Tahunan</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+
+
+
+
+                                    </ul>
+
+                            </div>
+                            <!-- End Sidebar -->
+
+                            <div class="clearfix"></div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="simplebar-placeholder" style="width: auto; height: 1272px;">
+
+            </div>
+        </div>
+        <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
+            <div class="simplebar-scrollbar" style="width: 0px; display: none;">
+
+            </div>
+        </div>
+        <div class="simplebar-track simplebar-vertical" style="visibility: visible;">
+            <div class="simplebar-scrollbar" style="height: 25px; transform: translate3d(0px, 0px, 0px); display: block;">
+
+            </div>
+        </div>
+    </div>
+    <!-- Sidebar -left -->
+
+</div>
+<!-- Left Sidebar End -->
+</html>

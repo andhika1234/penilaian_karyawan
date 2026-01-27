@@ -1,0 +1,22 @@
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+>
+<div class="modal-header bg-danger">
+  <h4 class="modal-title" id="exampleModalLabel1">Konfirmasi Non Aktifkan Akun</h4>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+  <p>Apakah anda yakin ingin Non Aktifkan akun </p>
+  <h5 th:text="${data.getName()}"></h5>
+  <form th:action="@{/user/banneduser}" method="post"
+        th:id="'deleteForm'+${data.getId()}">
+    <input type="hidden" th:value="${data.getId()}" name="id">
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="submit" th:form="'deleteForm'+${data.getId()}" class="btn btn-danger waves-effect waves-light">Non Aktifkan</button>
+  <button type="button" class="btn btn-dark waves-effect waves-light" data-bs-dismiss="modal">Batal</button>
+</div>
+</html>

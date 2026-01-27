@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/master}"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Pengadaan</title>
+
+</head>
+<body class="" data-layout-color="light" data-layout-mode="default" data-layout-size="fluid" data-topbar-color="light"
+      data-leftbar-position="fixed" data-leftbar-color="light" data-leftbar-size="default" data-sidebar-user="true">
+
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="col-md-4">
+                            <a class="btn btn-success waves-effect waves-light" role="button"
+                               title="Tambah Data Sekolah"
+                               th:href="@{/user/tambah}">
+                                <i class="mdi mdi-plus-circle me-1"></i>Tambah User</a>
+
+
+                        </div>
+
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a th:href="@{/home}">Beranda</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Daftar User</li>
+                            </ol>
+                        </nav>
+                    </div>
+
+                </div>
+            </div> <!-- end card -->
+        </div><!-- end col-->
+    </div>
+    <!-- end row -->
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <div style="display: none;">
+                            <a id="urlDatatableId" th:href="@{/datatable/userdata}"></a>
+                        </div>
+                        <hr/>
+                        <table id="datauser" class="table table-striped table-bordered table-sm w-100">
+                            <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Nama Pengguna</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+<!--                            <tr>-->
+<!--                                <th>1</th>-->
+<!--                                <th>Admin</th>-->
+<!--                                <th>admin@gmail.com</th>-->
+<!--                                <th>Admin</th>-->
+<!--                                <th>Administrator</th>-->
+<!--                                <th>Aktif</th>-->
+<!--                                <th>-->
+<!--                                    <span class="fas fa-pencil-alt text-warning"></span>-->
+<!--                                    <span class="fa fa-trash-alt text-danger"></span>-->
+<!--                                </th>-->
+<!--                            </tr>-->
+
+<!--                            <tr>-->
+<!--                                <th>2</th>-->
+<!--                                <th>satker</th>-->
+<!--                                <th>adminsatker@gmail.com</th>-->
+<!--                                <th>Satker</th>-->
+<!--                                <th>Admin Satker</th>-->
+<!--                                <th>Aktif</th>-->
+<!--                                <th>-->
+<!--                                    <span class="fas fa-pencil-alt text-warning"></span>-->
+<!--                                    <span class="fa fa-trash-alt text-danger"></span>-->
+<!--                                </th>-->
+<!--                            </tr>-->
+
+
+<!--                            <tr>-->
+<!--                                <th>3</th>-->
+<!--                                <th>satdik</th>-->
+<!--                                <th>adminsatdik@gmail.com</th>-->
+<!--                                <th>Pengelola PBJ</th>-->
+<!--                                <th>Pengelola PBJ</th>-->
+<!--                                <th>Aktif</th>-->
+<!--                                <th>-->
+<!--                                    <span class="fas fa-pencil-alt text-warning"></span>-->
+<!--                                    <span class="fa fa-trash-alt text-danger"></span>-->
+<!--                                </th>-->
+<!--                            </tr>-->
+
+<!--                            <tr>-->
+<!--                                <th>4</th>-->
+<!--                                <th>penyedia</th>-->
+<!--                                <th>penyedia@gmail.com</th>-->
+<!--                                <th>Andhika</th>-->
+<!--                                <th>Penyedia</th>-->
+<!--                                <th>Aktif</th>-->
+<!--                                <th>-->
+<!--                                    <span class="fas fa-pencil-alt text-warning"></span>-->
+<!--                                    <span class="fa fa-trash-alt text-danger"></span>-->
+<!--                                </th>-->
+<!--                            </tr>-->
+
+
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+
+
+                    <div id="standard-modal" class="modal fade" tabindex="-1" role="dialog"
+                         aria-labelledby="standard-modalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+                         aria-labelledby="deleteModalLabel1">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <!--Modal content menggunakan link-->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.modal -->
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- end row -->
+
+
+</th:block>
+
+
+<th:block layout:fragment="page_js">
+
+
+
+
+
+    <script type="text/javascript" th:inline="javascript">
+    $(document).ready(function() {
+        $('#deleteModal').on('show.bs.modal', function (e) {
+            $(this).find('.modal-content').load(e.relatedTarget.href);
+        });
+        var datatableUrl = document.getElementById("urlDatatableId").href;
+        var link = /*[[@{/}]]*/'';
+        var linkDelete = /*[[@{/user/banned/}]]*/'';
+        var linkDetail = /*[[@{/user/detailuser/}]]*/'';
+        var linkEdit = /*[[@{/user/edit/}]]*/'';
+          var linkPW = /*[[@{/user/changepassword/}]]*/'';
+        var linkAktif = /*[[@{/user/aktif/}]]*/'';
+        var oTable = $('#datauser').dataTable({
+            "orderCellsTop": true,
+            "fixedHeader": true,
+            "aoColumns" : [
+                {
+                    "class":  "id",
+                    "sWidth": "1%",
+                    "bSortable": false
+                },
+                {
+                    "class":  "username",render: $.fn.dataTable.render.text()
+                },
+                {
+                    "class":  "email",render: $.fn.dataTable.render.text()
+                },
+                {
+                    "class":  "name",render: $.fn.dataTable.render.text()
+                },
+                {
+                    "class":  "namarole",render: $.fn.dataTable.render.text()
+                },
+                {
+                    "class":  "status",
+                    "mRender": function(data){
+                        if(data==='0'){
+                            return 'Inactive';
+                        }else if(data==='1'){
+                            return 'Active';
+                        }else if(data==='2'){
+                            return 'Non Active';
+                        }
+                    }
+                },
+                {
+                    "class":  "details-control",
+                    "sWidth": "10%",
+                    "bSortable": false,
+                    "sName" : "action",
+                    "mRender": function(data, oObj, row){
+                        var editLink = '<a href="'+linkEdit+row[0]+'" role="button" ' +
+                            'class="btn btn-sm btn-icon btn-pure btn-outline edit-row-btn" ' +
+                            'data-toggle="tooltip" data-original-title="Ubah User">' +
+                            '<i class="fas fa-pencil-alt text-warning" aria-hidden=\"true\"></i></a>';
+
+                       var PWLink = '<a href="'+linkPW+row[0]+'" role="button" ' +
+                            'class="btn btn-sm btn-icon btn-pure btn-outline edit-row-btn" ' +
+                            'data-toggle="tooltip" data-original-title="Ubah Password">' +
+                            '<i class="mdi mdi-key-change text-primary" aria-hidden=\"true\"></i></a>';
+
+                        var aktifLink = "<a " +
+                            "class=\"btn btn-sm btn-icon btn-pure btn-outline delete-row-btn\" " +
+                            "data-bs-toggle=\"modal\" " +
+                            "data-bs-target=\"#deleteModal\" " +
+                            "href=\""+linkDelete+data+ " \" " +
+                            "data-toggle=\"tooltip\" data-placement=\"top\" title=\"Non Aktifkan\">" +
+                            "<span class=\"fas fa-times-circle text-danger\"></span></a>&nbsp;";
+
+                        var deletedLink = "<a " +
+                            "class=\"btn btn-sm btn-icon btn-pure btn-outline delete-row-btn\" " +
+                            "data-bs-toggle=\"modal\" " +
+                            "data-bs-target=\"#deleteModal\" " +
+                            "href=\""+linkAktif+data+ " \" " +
+                            "data-toggle=\"tooltip\" data-placement=\"top\" title=\"Aktifkan\">" +
+                            "<span class=\"fas fa-check-circle text-success\"></span></a>&nbsp;";
+
+                               var detailLink = '<a href="'+linkDetail+row[0]+'" role="button" ' +
+                            'class="btn btn-sm btn-icon btn-pure btn-outline edit-row-btn" ' +
+                            'data-toggle="tooltip" data-original-title="Detail User">' +
+                            '<i class="far fa-eye text-primary" aria-hidden=\"true\"></i></a>';
+
+
+                        var returnString = editLink + PWLink + detailLink;
+
+                        if (row[5] === '2') {
+                            returnString += deletedLink; // Display deletion icon for banned users
+                        } else  {
+                            returnString += aktifLink; // Display activation icon for active users
+                        }
+                        return returnString;
+                    }
+                },
+            ],
+            "sPaginationType": "full_numbers",
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": datatableUrl,
+            "fnDrawCallback": function ( oSettings ) {
+                /* Need to redo the counters if filtered or sorted */
+                if ( oSettings ){
+                    for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ )
+                    {
+                        $('td:eq(0)', oSettings.aoData[ oSettings.aiDisplay[i] ].nTr ).html( i+1+oSettings._iDisplayStart);
+                    }
+                }
+
+                /* search on enter column filter */
+                $('.text_filter')
+                    .unbind()
+                    .bind('keyup', function(e){
+                        if (e.keyCode != 13 ) return;
+                        else
+                            oTable.fnFilter(this.value, $(this).closest('thead th').index());
+                    })
+                    .change(function(){
+                        oTable.fnFilter(this.value, $(this).closest('thead th').index());
+                    });
+            },
+            "language": {
+                "sLengthMenu":   "Tampilkan _MENU_ entri",
+                "sZeroRecords":  "Tidak ditemukan data yang sesuai",
+                "sInfo":         "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                "sInfoEmpty":    "Menampilkan 0 sampai 0 dari 0 entri",
+                "sInfoFiltered": "",
+                "sInfoPostFix":  "",
+                "sSearch":       "Cari:",
+                "sUrl":          "",
+                "oPaginate": {
+                    "sFirst":    "Pertama",
+                    "sPrevious": "Sebelumnya",
+                    "sNext":     "Selanjutnya",
+                    "sLast":     "Terakhir"
+                },
+                "processing": '<div class="spinner-border text-primary" role="status">\n'+
+                    '<span class="sr-only">Loading...</span>\n'+
+                    '</div>',
+            }
+        });
+    });
+</script>
+
+
+
+</th:block>
+</body>
+</html>

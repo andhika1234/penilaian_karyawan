@@ -1,0 +1,34 @@
+ /* Styling the star rating */
+        .starrating > input {display: none;}  /* Hide radio buttons */
+
+        .starrating > label:before {
+            content: "\f005"; /* FontAwesome star */
+            font-weight: 900;
+            margin: 2px;
+            font-size: 20px;
+            font-family: "Font Awesome 5 Free";
+            display: inline-block;
+        }
+
+        .starrating > label {
+            color: #222222; /* Default star color */
+        }
+
+        .starrating > input:checked ~ label {
+            color: #ffca08; /* Yellow when star is selected */
+        }
+
+        .starrating > input:hover ~ label {
+            color: #ffca08; /* Yellow on hover */
+        }
+
+        /* Ensure the stars appear from left to right */
+        .starrating {
+            direction: rtl;
+            display: inline-block;
+        }
+
+        .starrating > input:checked ~ label:hover,
+        .starrating > label:hover ~ label {
+            color: #ffca08; /* Set color when hovered */
+        }

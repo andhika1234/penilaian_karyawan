@@ -1,0 +1,51 @@
+2025-12-05T10:02:07.961+07:00  INFO 13516 --- [restartedMain] i.c.l.d.DashboardLadiaApplication        : Starting DashboardLadiaApplication using Java 17.0.10 with PID 13516 (C:\Users\Muhriz\Documents\Kerjaan\project\dashboard_ladia\target\classes started by Muhriz in C:\Users\Muhriz\Documents\Kerjaan\project\dashboard_ladia)
+2025-12-05T10:02:08.065+07:00  INFO 13516 --- [restartedMain] i.c.l.d.DashboardLadiaApplication        : No active profile set, falling back to 1 default profile: "default"
+2025-12-05T10:02:08.606+07:00  INFO 13516 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-05T10:02:13.220+07:00  INFO 13516 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8030 (http)
+2025-12-05T10:02:13.287+07:00  INFO 13516 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-05T10:02:13.288+07:00  INFO 13516 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2025-12-05T10:02:13.463+07:00  INFO 13516 --- [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 4853 ms
+2025-12-05T10:02:16.783+07:00  INFO 13516 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8030 (http) with context path '/ladia'
+2025-12-05T10:02:16.807+07:00  INFO 13516 --- [restartedMain] i.c.l.d.DashboardLadiaApplication        : Started DashboardLadiaApplication in 11.704 seconds (process running for 16.045)
+2025-12-05T10:03:04.205+07:00  INFO 13516 --- [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-05T10:03:04.671+07:00  INFO 13516 --- [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2025-12-05T10:03:15.526+07:00  INFO 7024 --- [restartedMain] i.c.l.d.DashboardLadiaApplication        : Starting DashboardLadiaApplication using Java 17.0.10 with PID 7024 (C:\Users\Muhriz\Documents\Kerjaan\project\dashboard_ladia\target\classes started by Muhriz in C:\Users\Muhriz\Documents\Kerjaan\project\dashboard_ladia)
+2025-12-05T10:03:15.549+07:00  INFO 7024 --- [restartedMain] i.c.l.d.DashboardLadiaApplication        : No active profile set, falling back to 1 default profile: "default"
+2025-12-05T10:03:15.907+07:00  INFO 7024 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-05T10:03:19.634+07:00  INFO 7024 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8030 (http)
+2025-12-05T10:03:19.683+07:00  INFO 7024 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-05T10:03:19.684+07:00  INFO 7024 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2025-12-05T10:03:19.877+07:00  INFO 7024 --- [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 3966 ms
+2025-12-05T10:03:22.831+07:00  INFO 7024 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8030 (http) with context path '/dashboard_ladia'
+2025-12-05T10:03:22.855+07:00  INFO 7024 --- [restartedMain] i.c.l.d.DashboardLadiaApplication        : Started DashboardLadiaApplication in 9.909 seconds (process running for 12.281)
+2025-12-05T10:05:04.326+07:00  INFO 7024 --- [http-nio-8030-exec-2] o.a.c.c.C.[.[.[/dashboard_ladia]         : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-05T10:05:04.328+07:00  INFO 7024 --- [http-nio-8030-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-05T10:05:04.337+07:00  INFO 7024 --- [http-nio-8030-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 6 ms
+2025-12-05T10:08:11.943+07:00  INFO 7024 --- [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-05T10:08:12.444+07:00  INFO 7024 --- [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2025-12-05T10:08:22.916+07:00  INFO 11104 --- [restartedMain] i.c.l.d.DashboardLadiaApplication        : Starting DashboardLadiaApplication using Java 17.0.10 with PID 11104 (C:\Users\Muhriz\Documents\Kerjaan\project\dashboard_ladia\target\classes started by Muhriz in C:\Users\Muhriz\Documents\Kerjaan\project\dashboard_ladia)
+2025-12-05T10:08:22.938+07:00  INFO 11104 --- [restartedMain] i.c.l.d.DashboardLadiaApplication        : No active profile set, falling back to 1 default profile: "default"
+2025-12-05T10:08:23.326+07:00  INFO 11104 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-05T10:08:27.909+07:00  INFO 11104 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8030 (http)
+2025-12-05T10:08:27.968+07:00  INFO 11104 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-05T10:08:27.969+07:00  INFO 11104 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2025-12-05T10:08:28.169+07:00  INFO 11104 --- [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 4832 ms
+2025-12-05T10:08:31.738+07:00  INFO 11104 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8030 (http) with context path '/dashboard_ladia'
+2025-12-05T10:08:31.768+07:00  INFO 11104 --- [restartedMain] i.c.l.d.DashboardLadiaApplication        : Started DashboardLadiaApplication in 11.842 seconds (process running for 14.318)
+2025-12-05T10:10:33.009+07:00  INFO 11104 --- [http-nio-8030-exec-1] o.a.c.c.C.[.[.[/dashboard_ladia]         : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-05T10:10:33.011+07:00  INFO 11104 --- [http-nio-8030-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-05T10:10:33.021+07:00  INFO 11104 --- [http-nio-8030-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 9 ms
+2025-12-05T10:15:13.392+07:00  INFO 11104 --- [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-05T10:15:13.821+07:00  INFO 11104 --- [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2025-12-05T10:15:26.701+07:00  INFO 11488 --- [restartedMain] i.c.l.d.DashboardLadiaApplication        : Starting DashboardLadiaApplication using Java 17.0.10 with PID 11488 (C:\Users\Muhriz\Documents\Kerjaan\project\dashboard_ladia\target\classes started by Muhriz in C:\Users\Muhriz\Documents\Kerjaan\project\dashboard_ladia)
+2025-12-05T10:15:26.724+07:00  INFO 11488 --- [restartedMain] i.c.l.d.DashboardLadiaApplication        : No active profile set, falling back to 1 default profile: "default"
+2025-12-05T10:15:27.011+07:00  INFO 11488 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-05T10:15:36.988+07:00  INFO 11488 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8030 (http)
+2025-12-05T10:15:37.058+07:00  INFO 11488 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-05T10:15:37.059+07:00  INFO 11488 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.14]
+2025-12-05T10:15:37.327+07:00  INFO 11488 --- [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 10312 ms
+2025-12-05T10:15:42.282+07:00  INFO 11488 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8030 (http) with context path '/dashboard_ladia'
+2025-12-05T10:15:42.314+07:00  INFO 11488 --- [restartedMain] i.c.l.d.DashboardLadiaApplication        : Started DashboardLadiaApplication in 18.902 seconds (process running for 22.178)
+2025-12-05T10:15:46.141+07:00  INFO 11488 --- [http-nio-8030-exec-1] o.a.c.c.C.[.[.[/dashboard_ladia]         : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-05T10:15:46.141+07:00  INFO 11488 --- [http-nio-8030-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-05T10:15:46.161+07:00  INFO 11488 --- [http-nio-8030-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 5 ms

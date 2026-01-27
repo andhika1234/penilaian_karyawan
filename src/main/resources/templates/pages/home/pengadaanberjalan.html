@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/master}">
+<head>
+    <title>Pengadaan Berjalan</title>
+
+</head>
+
+<th:block layout:fragment="content">
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+
+            <!-- Rata-rata Waktu Penyelesaian Paket -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <strong>Rata-rata Waktu Penyelesaian Paket</strong>
+                    </div>
+                    <div class="card-body">
+                        <div id="chartAverTimeRadial"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paket Mendekati Deadline -->
+            <div class="col-md-8 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <strong>Paket yang Mendekati Deadline</strong>
+                    </div>
+                    <div class="card-body">
+
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>Nama Paket</th>
+                                <th>Tanggal Deadline</th>
+                                <th>Sisa Hari</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tableDeadline">
+                            <!-- akan diisi JS -->
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pie Chart Status Pengadaan -->
+            <div class="col-md-12 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <strong>Status Pengadaan Berjalan</strong>
+                    </div>
+                    <div class="card-body">
+                        <div id="chartStatusPie"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="page_js">
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+
+        // ==============================================
+        // DUMMY DATA (bisa diambil dari DB nantinya)
+        // ==============================================
+        var rataRataWaktu = 78; // persen progress penyelesaian rata-rata
+
+        var deadlinePaket = [
+            { nama: "Pengadaan Laptop 2024", deadline: "2025-01-15", sisa: 12 },
+            { nama: "Renovasi Laboratorium", deadline: "2025-01-10", sisa: 7 },
+            { nama: "Pengadaan ATK Semester 2", deadline: "2025-01-08", sisa: 5 },
+            { nama: "Belanja Server Sekolah", deadline: "2025-01-06", sisa: 3 }
+        ];
+
+        var statusPengadaan = {
+            berjalan: 12,
+            menungguVerifikasi: 5,
+            bermasalah: 2
+        };
+
+        // ==============================================
+        // 1. RADIAL CHART RATA-RATA WAKTU
+        // ==============================================
+        var avgOptions = {
+            chart: { type: 'radialBar', height: 300 },
+            series: [rataRataWaktu],
+            labels: ['Rata-rata (%)'],
+            colors: ['#28a745'],
+            plotOptions: {
+                radialBar: {
+                    hollow: { size: '60%' },
+                    dataLabels: {
+                        value: { fontSize: '28px' }
+                    }
+                }
+            }
+        };
+        new ApexCharts(document.querySelector("#chartAverTimeRadial"), avgOptions).render();
+
+        // ==============================================
+        // 2. TABEL DEADLINE
+        // ==============================================
+
+        var tbody = document.getElementById("tableDeadline");
+        deadlinePaket.forEach(p => {
+            var tr = document.createElement("tr");
+            if (p.sisa <= 5) tr.style.background = "#ffe6e6"; // merah muda jika kritis
+
+            tr.innerHTML = `
+                <td>${p.nama}</td>
+                <td>${p.deadline}</td>
+                <td><strong>${p.sisa} hari</strong></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // ==============================================
+        // 3. PIE CHART STATUS PENGADAAN
+        // ==============================================
+        var pieOptions = {
+            chart: { type: 'pie', height: 330 },
+            series: [
+                statusPengadaan.berjalan,
+                statusPengadaan.menungguVerifikasi,
+                statusPengadaan.bermasalah
+            ],
+            labels: [
+                "Berjalan",
+                "Menunggu Verifikasi",
+                "Bermasalah"
+            ],
+            colors: ['#3498db', '#f1c40f', '#e74c3c'],
+            legend: { position: 'bottom' }
+        };
+
+        new ApexCharts(document.querySelector("#chartStatusPie"), pieOptions).render();
+
+    </script>
+
+</th:block>
+
+
+
+</html>

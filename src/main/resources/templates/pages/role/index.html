@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/master}"
+>
+<head>
+  <meta charset="UTF-8">
+  <title>Hak Akses Fitur</title>
+
+</head>
+
+<th:block layout:fragment="page_css">
+  <link th:href="@{/dist/libs/select2baru/dist/css/select2.min.css}" rel="stylesheet" type="text/css"/>
+  <style>
+            .select2-results .select2-disabled,  .select2-results__option[aria-disabled=true] {
+                display: none;
+            }
+
+
+    </style>
+</th:block>
+<body class="" data-layout-color="light" data-layout-mode="default" data-layout-size="fluid" data-topbar-color="light"
+      data-leftbar-position="fixed" data-leftbar-color="light" data-leftbar-size="default" data-sidebar-user="true">
+
+
+<th:block layout:fragment="content">
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="col-md-4">
+
+            </div>
+
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/home}">Beranda</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${judul}"></li>
+              </ol>
+            </nav>
+          </div>
+
+        </div>
+      </div> <!-- end card -->
+    </div><!-- end col-->
+  </div>
+  <!-- end row -->
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <form class="form-horizontal"
+                th:action="@{/role/create}"
+                method="post"
+                enctype="multipart/form-data">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-6 col-lg-4">
+                  <div class="form-group row">
+                    <label for="roleId" class="col-sm-12 control-label col-form-label">Role / Peran</label>
+                    <div class="col-sm-12">
+                      <div class="custom-control custom-radio" th:each="role: ${roleList}">
+                        <input type="checkbox" id="roleId" name="roleId" th:id="${'radio'+role.getId()}" class="custom-control-input" th:value="${role.getId()}">
+                        <label class="custom-control-label" th:for="${'radio'+role.getId()}" th:text="${'ID: '+role.getId()+'-'+role.getName()}"></label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-lg-6">
+                  <div class="form-group row">
+                    <label for="featureId" class="col-sm-12 control-label col-form-label">Fitur</label>
+                    <div class="col-sm-12">
+                      <select class="form-control select2" name="feature[]" id="featureId" multiple="multiple" required>
+                        <option value="">--Pilih--</option>
+                        <option th:each="f: ${featureList}" th:value="${f?.getId()}"
+                                th:text="${'['+f?.getId()+'] '+f?.getName()}" ></option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="form-group m-b-0">
+                <button type="submit" class="btn btn-info">Tambah</button>
+              </div>
+            </div><!-- form-layout-footer -->
+          </form>
+
+        </div> <!-- end card-body -->
+      </div> <!-- end card-->
+    </div> <!-- end col -->
+    <div class="col-6" th:each="role:${roleList}">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex no-block align-items-center m-b-30">
+            <h4 class="card-title" th:text="${role.getName()}"></h4>
+            <div class="ml-auto"></div>
+          </div>
+          <table class="table table-sm table-condensed display responsive" style="width: 100%;">
+            <tbody>
+            <tr th:each="rf:${role.getRoleFeature()}">
+              <td th:text="${rf.getFeature().getId()+' - '+rf.getFeature().getName()}"></td>
+              <td><a th:href="@{'/role/delete/'+${rf.getId()}}"><i class="fa fa-trash text-danger t-12"></i></a></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</th:block>
+
+
+<th:block layout:fragment="page_js">
+
+  <script th:src="@{/dist/libs/select2baru/dist/js/select2.min.js}" type="text/javascript"></script>
+  <script th:src="@{/dist/libs/jquery-validation-1.19.1/dist/jquery.validate.min.js}" type="text/javascript"></script>
+  <script th:src="@{/dist/libs/jquery-validation-1.19.1/dist/additional-methods.js}" type="text/javascript"></script>
+
+
+  <script type="text/javascript" th:inline="javascript">
+        $(document).ready(function() {
+            $(".select2").select2();
+        });
+    </script>
+
+</th:block>
+</body>
+</html>

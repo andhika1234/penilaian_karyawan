@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/master}">
+<head>
+    <title>Dashboard Satdik</title>
+
+</head>
+
+<th:block layout:fragment="content">
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+
+            <!-- Time Series Pengadaan -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <strong>Rekapitulasi Time Series Pengadaan</strong>
+                    </div>
+                    <div class="card-body">
+                        <div id="chartTimeseries"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Klasifikasi Komoditas -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <strong>Klasifikasi Komoditas / Jenis Pengadaan</strong>
+                    </div>
+                    <div class="card-body">
+                        <div id="chartKomoditas"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rekapitulasi Kontrak -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <strong>Rekapitulasi Kontrak Pengadaan</strong>
+                    </div>
+                    <div class="card-body">
+                        <div id="chartKontrak"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anggaran vs Realisasi -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <strong>Perbandingan Anggaran dengan Realisasi</strong>
+                    </div>
+                    <div class="card-body">
+                        <div id="chartAnggaran"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</th:block>
+
+
+<th:block layout:fragment="page_js">
+
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        // ======================
+        // 1. Time Series Pengadaan
+        // ======================
+        var timeseries = {
+            chart: { type: 'line', height: 300 },
+            series: [{
+                name: 'Jumlah Pengadaan',
+                data: [10, 25, 18, 30, 22, 40, 38, 50, 45]
+            }],
+            xaxis: {
+                categories: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep']
+            },
+            stroke: { curve: 'smooth' },
+            colors: ['#008FFB']
+        };
+        new ApexCharts(document.querySelector("#chartTimeseries"), timeseries).render();
+
+
+        // ======================
+        // 2. Klasifikasi Komoditas
+        // ======================
+        var komoditas = {
+            chart: { type: 'donut', height: 300 },
+            series: [44, 55, 13, 33],
+            labels: ['ATK', 'Peralatan Sekolah', 'Jasa Konsultan', 'Konstruksi'],
+            colors: ['#00E396', '#FEB019', '#FF4560', '#775DD0']
+        };
+        new ApexCharts(document.querySelector("#chartKomoditas"), komoditas).render();
+
+
+        // ======================
+        // 3. Rekapitulasi Kontrak Pengadaan
+        // ======================
+        var kontrak = {
+            chart: { type: 'bar', height: 300 },
+            series: [{
+                name: 'Nilai Kontrak (Juta)',
+                data: [120, 150, 80, 200, 180]
+            }],
+            xaxis: {
+                categories: ['Paket A','Paket B','Paket C','Paket D','Paket E']
+            },
+            colors: ['#546E7A']
+        };
+        new ApexCharts(document.querySelector("#chartKontrak"), kontrak).render();
+
+
+        // ======================
+        // 4. Anggaran vs Realisasi
+        // ======================
+        var anggaran = {
+            chart: { type: 'bar', height: 300, stacked: false },
+            series: [
+                { name: 'Anggaran', data: [500, 700, 600, 800] },
+                { name: 'Realisasi', data: [450, 620, 550, 700] }
+            ],
+            xaxis: { categories: ['Triwulan 1', 'Triwulan 2', 'Triwulan 3', 'Triwulan 4'] },
+            colors: ['#1E90FF', '#00B894']
+        };
+        new ApexCharts(document.querySelector("#chartAnggaran"), anggaran).render();
+    </script>
+
+</th:block>
+
+
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/master}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Detail User</title>
+
+</head>
+<body class="" data-layout-color="light" data-layout-mode="default" data-layout-size="fluid" data-topbar-color="light"
+      data-leftbar-position="fixed" data-leftbar-color="light" data-leftbar-size="default" data-sidebar-user="true">
+
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="col-md-4">
+                            <a class="btn btn-success waves-effect waves-light" role="button"
+                               title="Tambah Data Sekolah" th:if="${user?.getRole().getId()==2}"
+                               th:href="@{'/user/tambahprogram/'+${user?.getId()}}">
+                                <i class="mdi mdi-plus-circle me-1"></i>Tambah Program</a>
+
+                        </div>
+
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a th:href="@{/home}">Beranda</a></li>
+                                <li class="breadcrumb-item"><a th:href="@{/user}">User</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Detail User</li>
+                            </ol>
+                        </nav>
+                    </div>
+
+                </div>
+            </div> <!-- end card -->
+        </div><!-- end col-->
+    </div>
+    <!-- end row -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+
+                            <tr>
+                                <th scope="row">Nama</th>
+                                <td th:text="${user?.getName()}"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Email</th>
+                                <td th:text="${user?.getEmail()}"></td>
+                            </tr>
+
+                        </table>
+                    </div>
+
+
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+
+                            <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Program</th>
+                                <th>Jenis Sumber Dana</th>
+                                <th>Action</th>
+
+                            </tr>
+                            </thead>
+
+                            <tbody id="myTable">
+                            <tr th:each="k: ${userProgramSekolahList}">
+                                <td th:text="${kStat.count}"></td>
+                                <td th:text="${k?.getProgramSekolah()?.getNamaProgram()}"></td>
+                                <td th:text="${k?.getJenisSumberDana()?.getNamaJenisSumberDana()}"></td>
+                                <td>
+                                    <a th:href="@{'/user/deleteprogram/'+${k?.getId()}}" class="fas fa-trash-alt text-danger" > </a>
+                                    <a th:href="@{'/user/editprogram/'+${k?.getId()}}" class="fas fa-pencil-alt text-warning"> </a>
+                                </td>
+
+                            </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- end row -->
+
+
+</th:block>
+
+
+<th:block layout:fragment="page_js">
+
+
+</th:block>
+</body>
+</html>

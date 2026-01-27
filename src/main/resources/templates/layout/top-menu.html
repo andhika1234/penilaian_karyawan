@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<div class="navbar-custom">
+    <ul class="list-unstyled topnav-menu float-end mb-0">
+<!--        <li class="nav-item dropdown mega-dropdown">-->
+<!--            <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown"-->
+<!--               href="#" role="button" aria-haspopup="false" aria-expanded="false">-->
+<!--                <i class="ti-bell font-20"></i>-->
+<!--                <span class="text-danger"><label></label></span>-->
+
+<!--            </a>-->
+
+<!--            <div class="dropdown-menu dropdown-menu-end p-0 mailbox animated fadeIn" style="width: 350px;">-->
+<!--                <div class="dropdown-header bg-primary text-white text-center py-3">-->
+<!--                    <h5 class="m-0"><span ></span> New Notifications</h5>-->
+<!--                </div>-->
+
+<!--                <div class="notification-slider">-->
+<!--                    <ul class="list-unstyled my-2" id="notificationList">-->
+<!--                        <li>-->
+<!--                            <div >-->
+<!--                                <a class="dropdown-item d-flex align-items-center">-->
+<!--                                    <div class="flex-shrink-0 me-3">-->
+<!--                                        <i class="fas fa-envelope-open-text text-primary"></i>-->
+<!--                                    </div>-->
+<!--                                    <div class="flex-grow-1 text-truncate" style="max-width: 250px;">-->
+<!--                                        <h6 class="mb-0"></h6>-->
+<!--                                        <small class="text-truncate" ></small>-->
+<!--                                    </div>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <div class="dropdown-item text-center">-->
+<!--                                <span class="text-muted">Tidak ada notifikasi baru</span>-->
+<!--                            </div>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+
+<!--                <div class="dropdown-footer d-flex justify-content-between p-2">-->
+<!--                    <a class="btn btn-outline-primary btn-sm me-2" >-->
+<!--                        <i class="fas fa-list-alt"></i> Lihat Semua Notifikasi-->
+<!--                    </a>-->
+<!--                    <a class="btn btn-outline-secondary btn-sm" >-->
+<!--                        <i class="fas fa-check-circle"></i> Tandai Semua Sudah Dibaca-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--        </li>-->
+
+
+
+
+<!--        <li class="dropdown notification-list topbar-dropdown">-->
+<!--            <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown"-->
+<!--               href="#" role="button" aria-haspopup="false" aria-expanded="false">-->
+<!--                <i class="mdi mdi-calendar"></i>-->
+<!--                <span class="pro-user-name ms-1">-->
+<!--                    <span th:text="${TAHUN_ANGGARAN_SESSION}"></span> <i class="mdi mdi-chevron-down"></i>-->
+<!--                </span>-->
+<!--            </a>-->
+<!--            <div class="dropdown-menu dropdown-menu-end profile-dropdown ">-->
+<!--                &lt;!&ndash; item&ndash;&gt;-->
+<!--                <div class="dropdown-header noti-title">-->
+<!--                    <h6 class="text-overflow m-0">Pilih Tahun !</h6>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; item&ndash;&gt;-->
+<!--                <a th:each="item : ${#numbers.sequence(TAHUN_ANGGARAN-1, TAHUN_ANGGARAN+1)}" th:href="@{'/'+${item}}"-->
+<!--                   class="dropdown-item notify-item">-->
+<!--                    <i class="fe-user"></i>-->
+<!--                    <span th:text="${item}"></span>-->
+<!--                </a>-->
+<!--            </div>-->
+<!--        </li>-->
+
+        <th:block sec:authorize="!isAuthenticated()">
+            <li class="nav-item dropdown">
+                <a class="nav-link waves-effect waves-dark" type="button"
+                   th:href="@{/login/admin}">
+                    Masuk <i class="fas fa-sign-in-alt font-16"></i>
+                </a>
+            </li>
+        </th:block>
+
+        <th:block sec:authorize="!isAuthenticated()">
+            <li class="nav-item dropdown"></li>
+        </th:block>
+
+        <li class="dropdown notification-list topbar-dropdown" sec:authorize="isAuthenticated()">
+            <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown"
+               href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                <img th:src="@{/dist/images/users/user-1.jpg}" alt="user-image" class="rounded-circle">
+                <span class="pro-user-name ms-1" th:text="${userLogin?.getName()}">
+                                     <i class="mdi mdi-chevron-down"></i>
+                </span>
+                <br/>
+<!--                <span th:if="${userLogin?.isPengelolaPbj()}"-->
+<!--                     ></span>-->
+
+            </a>
+            <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
+
+
+                <!-- item-->
+<!--                <a th:href="@{'/user/profil/'+${userLogin?.getId()}}" class="dropdown-item notify-item">-->
+<!--                    <i class="fe-user"></i>-->
+<!--                    <span>Akun Saya</span>-->
+<!--                </a>-->
+
+                <div class="dropdown-divider"></div>
+
+                <!-- item-->
+                <form id="logoutForm" th:action="@{/logout}" method="post">
+                </form>
+                <a href="#" onclick="document.getElementById('logoutForm').submit();" class="dropdown-item notify-item">
+                    <i class="fe-log-out"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </li>
+    </ul>
+
+    <!-- LOGO -->
+    <div class="logo-box">
+        <a th:href="@{/}" class="logo logo-dark text-center">
+            <span class="logo-lg">
+                <img th:src="@{/dist/images/penilaiankaryawan3.png}" alt="" height="150">
+            </span>
+        </a>
+    </div>
+
+    <ul class="list-unstyled topnav-menu topnav-menu-left mb-0">
+        <li>
+            <button class="button-menu-mobile waves-effect" type="button">
+                <i class="fe-menu"></i>
+            </button>
+        </li>
+
+        <li>
+            <h5 class="page-title-main" th:text="${judul}"></h5>
+        </li>
+    </ul>
+    <div class="clearfix"></div>
+
+</div>
+<!-- end Topbar -->
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pilih Jenis User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group text-center">
+                            <a class="btn btn-info waves-effect waves-light" style="width:200px;"
+                               th:href="@{/login/penyedia}">Penyedia</a>
+                            <a class="btn btn-success waves-effect waves-light" style="width:200px;"
+                               th:href="@{/login/nonpenyedia}">Satuan Pendidikan</a>
+                        </div>
+                    </div> <!-- end card-body -->
+                </div> <!-- end card-->
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</html>

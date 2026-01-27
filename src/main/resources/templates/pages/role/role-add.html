@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/master}"
+>
+<head>
+  <meta charset="UTF-8">
+  <title>Hak Akses Fitur</title>
+
+</head>
+
+<th:block layout:fragment="page_css">
+  <link th:href="@{/dist/libs/sweetalert2/sweetalert2.css}" rel="stylesheet" type="text/css"/>
+
+</th:block>
+<body class="" data-layout-color="light" data-layout-mode="default" data-layout-size="fluid" data-topbar-color="light"
+      data-leftbar-position="fixed" data-leftbar-color="light" data-leftbar-size="default" data-sidebar-user="true">
+
+
+<th:block layout:fragment="content">
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="col-md-4">
+
+            </div>
+
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/home}">Beranda</a></li>
+                <li class="breadcrumb-item" ><a th:href="@{/role}">Hak Akses Fitur</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${judul}"></li>
+              </ol>
+            </nav>
+          </div>
+
+        </div>
+      </div> <!-- end card -->
+    </div><!-- end col-->
+  </div>
+  <!-- end row -->
+
+  <div class="row">
+
+    <div class="col-4" th:each="gfs, iStat : ${featureList}">
+      <div class="card-columns column-count-4 mg-t-20">
+        <div class="card shadow-base widget-11" >
+          <div class="card-header">
+            <div class="card-title" th:text="${gfs.getGroupFeature().getGroups()}"></div>
+          </div><!-- card-header -->
+          <div class="card-body">
+            <ul class="list-unstyled mg-b-0">
+              <li th:each="fs: ${gfs.getFeatureSelectedDTOList()}">
+                <label class="ckbox" th:id="${fs.getFeature().getId()}"  data-toggle="tooltip" data-placement="top">
+                  <input type="checkbox"
+                         class="checkboxClass" th:name="${'groupfeature'+gfs.getGroupFeature().getId()}"
+                         th:id="${'featureId-'+fs.getFeature().getId()}"
+                         th:checked="${fs.isSelected()}" >
+                  <span th:text="${fs?.getFeature().getName()}"></span>
+                </label>
+              </li>
+            </ul>
+          </div><!-- card-block -->
+        </div><!-- card -->
+      </div>
+    </div>
+  </div>
+
+
+</th:block>
+
+
+<th:block layout:fragment="page_js">
+
+  <script th:src="@{/dist/libs/sweetalert2/sweetalert2.js}"></script>
+
+  <script type="text/javascript" th:inline="javascript">
+        $(function(){
+            'use strict';
+
+            $('.checkboxClass').click(function () {
+                var url = /*[[@{'/service/role/feature/'+${role.getId()}+'/'}]]*/'';
+
+                var idCheckbox=$(this).attr('id');
+                var idFeature=idCheckbox.split("-")[1];
+                var term = $(this).is(":checked");
+                // Send the data using post
+                var posting = $.post( url+idFeature, { check: term } );
+
+                posting.done(function( data ) {
+                    //berjalan asynchronous. Jika database berhasil update. Maka update radio button
+                    if(data=='false'|| data==='true'){//berhasil update
+                        swal({
+                            type: 'success',title: 'Success',timer:2000,showConfirmButton: false
+                        })
+                        $("#featureId-"+idFeature+"").prop("checked", (data === 'true'));
+                    }else{
+                        swal({
+                            icon: 'error',
+                            title: 'Error. Pastikan koneksi internet tersedia dan silakan coba lagi',
+                        })
+                    }
+                });
+                //batalkan ubah radio button by klik
+                return false;
+
+
+
+
+            });
+        });
+    </script>
+
+</th:block>
+</body>
+</html>

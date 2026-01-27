@@ -1,0 +1,71 @@
+# DATABASE
+spring.datasource.url=jdbc:postgresql://localhost/penilaian_karyawan
+spring.datasource.username=postgres
+spring.datasource.password=gajah
+
+# The SQL dialect makes Hibernate generate better SQL for the chosen database
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+# Hibernate ddl auto (create, create-drop, validate, update)
+spring.jpa.hibernate.ddl-auto=update
+
+spring.thymeleaf.cache=false
+
+server.port=8031
+server.servlet.context-path=/penilaian_karyawan
+
+spring.main.allow-circular-references=true
+
+#logging.file.path = log4j/ (ini di komentar)
+#diganti 2 baris dibawah ini
+
+
+#logging.path = C:/Users/Muhriz/Documents/Kerjaan/project/ladia/src/main/resources/logs
+#resource.path = C:/Users/Muhriz/Documents/Kerjaan/ladia/src/main/resources
+logging.file.path = C:/Users/Muhriz/Documents/Kerjaan/project/ladia/logs
+
+
+#storage
+spring.servlet.multipart.max-file-size=50MB
+spring.servlet.multipart.max-request-size=50MB
+
+
+
+logging.level.web = INFO
+
+
+log4j.logger.org.thymeleaf=DEBUG
+log4j.logger.org.thymeleaf.TemplateEngine.CONFIG=TRACE
+log4j.logger.org.thymeleaf.TemplateEngine.TIMER=TRACE
+log4j.logger.org.thymeleaf.TemplateEngine.cache.TEMPLATE_CACHE=TRACE
+
+#Json
+spring.jackson.serialization.fail-on-empty-beans=false
+
+
+# file validation
+# ON KB
+global.file.size=10048
+doctemplate.file.type=application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document
+nodin.file.type=application/pdf
+slider.file.type=image/png,image/jpeg,image/gif
+pinjam.file.type=image/png,image/jpeg,image/gif, application/pdf
+pdf.file.type=application/pdf
+zip.file.type=application/x-zip-compressed
+rar.file.type=application/x-rar-compressed,application/octet-stream
+image.file.type=image/png,image/jpeg,image/gif
+csv.file.type = csv
+dokper.file.type = application/pdf, image/png, image/jpeg, application/x-rar-compressed, application/octet-stream, application/x-zip-compressed, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/plain
+dokver.file.type = application/pdf , image/png, image/jpeg,application/octet-stream
+xlms.file.type= csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+
+#CUSTOM
+application.domain=http://localhost:8030/penilaian_karyawan
+
+spring.jpa.properties.hibernate.enable_lazy_load_no_trans=true
+
+
+
+
+

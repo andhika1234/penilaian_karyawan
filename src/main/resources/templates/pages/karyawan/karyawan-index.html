@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/master}">
+<head>
+    <title>Karyawan</title>
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        .header-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6c757d;
+        }
+        .progress-soft {
+            background-color: rgba(0,0,0,0.05);
+        }
+        .btn-group .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        .btn-group .btn i {
+            font-size: 1rem;
+        }
+        /* SweetAlert2 custom button styling */
+        .swal2-actions .btn {
+            margin: 0 0.25rem;
+            padding: 0.5rem 1.5rem;
+        }
+    </style>
+</head>
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Data Karyawan</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="header-title mb-0">Daftar Karyawan</h4>
+                        <a th:href="@{/karyawan/tambah}" class="btn btn-primary">
+                            <i class="ti ti-user-plus me-1"></i>
+                            Tambah Karyawan
+                        </a>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="karyawanTable" class="table table-striped table-bordered dt-responsive nowrap w-100">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Karyawan</th>
+                                    <th>NIK</th>
+                                    <th>Nomor Telepon</th>
+                                    <th>Email Karyawan</th>
+                                    <th>Divisi</th>
+                                    <th>Jabatan</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${karyawanList == null or karyawanList.isEmpty()}">
+                                    <td colspan="9" class="text-center">Tidak ada data karyawan</td>
+                                </tr>
+                                <tr th:each="karyawan, iterStat : ${karyawanList}">
+                                    <td th:text="${iterStat.count}">1</td>
+                                    <td th:text="${karyawan.namaKaryawan}">John Doe</td>
+                                    <td th:text="${karyawan.nik}">3201234567890123</td>
+                                    <td th:text="${karyawan.nomorTelepon}">08123456789</td>
+                                    <td th:text="${karyawan.emailKaryawan}">john@example.com</td>
+                                    <td th:text="${karyawan.divisi != null ? karyawan.divisi.namaDivisi : '-'}">IT</td>
+                                    <td th:text="${karyawan.jabatan != null ? karyawan.jabatan.namaJabatan : '-'}">Developer</td>
+                                    <td>
+                                        <span th:if="${karyawan.statusAktif}" class="badge bg-success">Aktif</span>
+                                        <span th:unless="${karyawan.statusAktif}" class="badge bg-danger">Tidak Aktif</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{/karyawan/edit/{id}(id=${karyawan.id})}" class="btn btn-sm btn-warning" title="Edit">
+                                                <i class="ti ti-edit"></i>
+                                            </a>
+                                            <a th:href="@{/karyawan/delete/{id}(id=${karyawan.id})}"
+                                               class="btn btn-sm btn-danger"
+                                               title="Hapus"
+                                               th:attr="data-nama=${karyawan.namaKaryawan}"
+                                               onclick="return confirm('Yakin ingin menghapus karyawan ' + this.getAttribute('data-nama') + '?');">
+                                                <i class="ti ti-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</th:block>
+
+<th:block layout:fragment="page_css">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+</th:block>
+
+<th:block layout:fragment="page_js">
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script th:inline="none">
+        $(document).ready(function() {
+            $('#karyawanTable').DataTable({
+                "language": {
+                    "lengthMenu": "Tampilkan _MENU_ data per halaman",
+                    "zeroRecords": "Data tidak ditemukan",
+                    "info": "Menampilkan halaman _PAGE_ dari _PAGES_",
+                    "infoEmpty": "Tidak ada data yang tersedia",
+                    "infoFiltered": "(difilter dari _MAX_ total data)",
+                    "search": "Cari:",
+                    "paginate": {
+                        "first": "Pertama",
+                        "last": "Terakhir",
+                        "next": "Selanjutnya",
+                        "previous": "Sebelumnya"
+                    }
+                },
+                "pageLength": 10,
+                "responsive": true,
+                "order": [[0, 'asc']],
+                "columnDefs": [
+                    { "orderable": false, "targets": 7 } // Disable sorting on Action column
+                ]
+            });
+        });
+
+        // Delete confirmation function
+        function confirmDelete(namaKaryawan) {
+            Swal.fire({
+                title: 'Hapus Karyawan?',
+                html: `Apakah Anda yakin ingin menghapus data karyawan <strong>${namaKaryawan}</strong>?<br><small class="text-muted">Data yang dihapus tidak dapat dikembalikan.</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="ti ti-trash me-1"></i> Ya, Hapus!',
+                cancelButtonText: '<i class="ti ti-x me-1"></i> Batal',
+                reverseButtons: true,
+                customClass: {
+                    confirmButton: 'btn btn-danger',
+                    cancelButton: 'btn btn-secondary'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // TODO: Add your delete logic here
+                    // Example: window.location.href = '/karyawan/delete/' + id;
+
+                    Swal.fire({
+                        title: 'Terhapus!',
+                        text: `Data karyawan ${namaKaryawan} telah dihapus.`,
+                        icon: 'success',
+                        confirmButtonColor: '#0d6efd',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+    </script>
+</th:block>
+
+</html>

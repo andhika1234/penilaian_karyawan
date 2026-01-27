@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/master}">
+<head>
+    <title>Tambah Penilaian Karyawan</title>
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        .header-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6c757d;
+        }
+        .progress-soft {
+            background-color: rgba(0,0,0,0.05);
+        }
+        .select2-container--bootstrap-5 .select2-selection {
+            min-height: 38px;
+        }
+        .gap-2 {
+            gap: 0.5rem;
+        }
+        /* Select2 validation styling */
+        .select2-container.is-invalid + .select2-container--bootstrap-5 .select2-selection {
+            border-color: #dc3545;
+        }
+        .is-invalid + .select2-container--bootstrap-5 .select2-selection {
+            border-color: #dc3545;
+        }
+        .select2-container--bootstrap-5 .select2-selection--single {
+            padding: 0.375rem 0.75rem;
+        }
+        /* Star Rating Styles */
+        .star-rating {
+            font-size: 2rem;
+            cursor: pointer;
+            user-select: none;
+        }
+        .star-rating .star {
+            color: #ddd;
+            transition: color 0.2s ease;
+            margin-right: 0.25rem;
+        }
+        .star-rating .star:hover,
+        .star-rating .star.hover {
+            color: #ffc107;
+        }
+        .star-rating .star.filled {
+            color: #ffc107;
+        }
+        .kriteria-item {
+            padding: 1rem;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+        .kriteria-item:hover {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+        }
+        .rating-value {
+            font-size: 0.875rem;
+            min-width: 50px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <div class="page-title-right">
+                    <a th:href="@{/penilaiankaryawan}" class="btn btn-secondary">
+                        <i class="ti ti-arrow-left me-1"></i>
+                        Kembali
+                    </a>
+                </div>
+                <h4 class="page-title">Tambah Penilaian Karyawan</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="header-title mb-4">Form Penilaian Karyawan</h4>
+
+                    <form id="formPenilaian" th:action="@{/penilaiankaryawan/save}" method="post" novalidate>
+                        <div class="row">
+                            <!-- Pilih Bulan dan Tahun -->
+                            <div class="col-md-6 mb-3">
+                                <label for="bulan" class="form-label">Bulan <span class="text-danger">*</span></label>
+                                <select class="form-control" id="bulan" name="bulan" required>
+                                    <option value="">Pilih Bulan</option>
+                                    <option value="1">Januari</option>
+                                    <option value="2">Februari</option>
+                                    <option value="3">Maret</option>
+                                    <option value="4">April</option>
+                                    <option value="5">Mei</option>
+                                    <option value="6">Juni</option>
+                                    <option value="7">Juli</option>
+                                    <option value="8">Agustus</option>
+                                    <option value="9">September</option>
+                                    <option value="10">Oktober</option>
+                                    <option value="11">November</option>
+                                    <option value="12">Desember</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Bulan wajib dipilih
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="tahun" class="form-label">Tahun <span class="text-danger">*</span></label>
+                                <select class="form-control" id="tahun" name="tahun" required>
+                                    <option value="">Pilih Tahun</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Tahun wajib dipilih
+                                </div>
+                            </div>
+
+                            <!-- Pilih Divisi -->
+                            <div class="col-md-6 mb-3">
+                                <label for="divisi" class="form-label">Divisi <span class="text-danger">*</span></label>
+                                <select class="form-control select2"
+                                        id="divisi"
+                                        name="divisiId"
+                                        data-placeholder="Pilih Divisi"
+                                        required>
+                                    <option value=""></option>
+                                    <option th:each="divisi : ${divisiList}"
+                                            th:value="${divisi.id}"
+                                            th:text="${divisi.namaDivisi}">
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Divisi wajib dipilih
+                                </div>
+                            </div>
+
+                            <!-- Nama Karyawan -->
+                            <div class="col-md-6 mb-3">
+                                <label for="namaKaryawan" class="form-label">Nama Karyawan <span class="text-danger">*</span></label>
+                                <select class="form-control select2"
+                                        id="namaKaryawan"
+                                        name="karyawanId"
+                                        data-placeholder="Pilih Karyawan"
+                                        required>
+                                    <option value=""></option>
+                                    <option th:each="karyawan : ${karyawanList}"
+                                            th:value="${karyawan.id}"
+                                            th:text="${karyawan.namaKaryawan}">
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Nama karyawan wajib dipilih
+                                </div>
+                            </div>
+
+                            <!-- Jabatan -->
+                            <div class="col-md-12 mb-3">
+                                <label for="jabatan" class="form-label">Jabatan <span class="text-danger">*</span></label>
+                                <select class="form-control select2"
+                                        id="jabatan"
+                                        name="jabatanId"
+                                        data-placeholder="Pilih Jabatan"
+                                        required>
+                                    <option value=""></option>
+                                    <option th:each="jabatan : ${jabatanList}"
+                                            th:value="${jabatan.id}"
+                                            th:text="${jabatan.namaJabatan}">
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Jabatan wajib dipilih
+                                </div>
+                            </div>
+
+                            <!-- Rating Penilaian per Kriteria -->
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Rating Penilaian <span class="text-danger">*</span></label>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <small class="text-muted mb-3 d-block">Klik bintang untuk memberikan penilaian (1-5 bintang)</small>
+
+                                        <div id="kriteriaContainer">
+                                            <!-- Kriteria dimuat dinamis dari database -->
+                                            <div th:each="kriteria : ${kriteriaList}" class="kriteria-item mb-3">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <strong th:text="${kriteria.namaKriteria}">Nama Kriteria</strong>
+                                                    <span class="badge bg-secondary rating-value">0/5</span>
+                                                </div>
+                                                <div class="star-rating" th:attr="data-kriteria=${kriteria.namaKriteria}">
+                                                    <i class="ti ti-star star" data-value="1"></i>
+                                                    <i class="ti ti-star star" data-value="2"></i>
+                                                    <i class="ti ti-star star" data-value="3"></i>
+                                                    <i class="ti ti-star star" data-value="4"></i>
+                                                    <i class="ti ti-star star" data-value="5"></i>
+                                                </div>
+                                                <input type="hidden"
+                                                       th:name="'kriteria[' + ${kriteria.namaKriteria} + ']'"
+                                                       class="rating-input"
+                                                       value="0">
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3 p-3 bg-light rounded">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <strong>Rata-rata Penilaian:</strong>
+                                                <h4 class="mb-0" id="averageRating">0.0 / 5.0</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="invalid-feedback d-block" id="ratingError" style="display: none;">
+                                    Semua kriteria wajib dinilai
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a th:href="@{/penilaiankaryawan}" class="btn btn-secondary">
+                                        <i class="ti ti-x me-1"></i>
+                                        Batal
+                                    </a>
+                                    <button type="button" class="btn btn-warning" id="resetBtn">
+                                        <i class="ti ti-refresh me-1"></i>
+                                        Reset
+                                    </button>
+                                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                                        <i class="ti ti-device-floppy me-1"></i>
+                                        Simpan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="page_js">
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Populate year dropdown and set defaults
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            const currentMonth = today.getMonth() + 1; // 1-12
+
+            // Populate year dropdown (current year - 2 to current year + 2)
+            const $tahunSelect = $('#tahun');
+            for (let year = currentYear - 2; year <= currentYear + 2; year++) {
+                $tahunSelect.append(new Option(year, year));
+            }
+
+            // Set default to current month and year
+            $('#bulan').val(currentMonth);
+            $('#tahun').val(currentYear);
+
+            // Initialize Select2
+            $('.select2').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: function() {
+                    return $(this).data('placeholder');
+                },
+                allowClear: true
+            });
+
+            // Form validation - SIMPLE VERSION
+            const form = document.getElementById('formPenilaian');
+
+            $('#submitBtn').on('click', function(event) {
+                event.preventDefault();
+
+                let isValid = true;
+                let errorMessage = '';
+
+                // Check bulan
+                if (!$('#bulan').val()) {
+                    errorMessage += 'Bulan belum dipilih\n';
+                    $('#bulan').addClass('is-invalid');
+                    isValid = false;
+                }
+
+                // Check tahun
+                if (!$('#tahun').val()) {
+                    errorMessage += 'Tahun belum dipilih\n';
+                    $('#tahun').addClass('is-invalid');
+                    isValid = false;
+                }
+
+                // Check divisi
+                if (!$('#divisi').val()) {
+                    errorMessage += 'Divisi belum dipilih\n';
+                    $('#divisi').next('.select2-container').addClass('is-invalid');
+                    isValid = false;
+                }
+
+                // Check karyawan
+                if (!$('#namaKaryawan').val()) {
+                    errorMessage += 'Nama Karyawan belum dipilih\n';
+                    $('#namaKaryawan').next('.select2-container').addClass('is-invalid');
+                    isValid = false;
+                }
+
+                // Check jabatan
+                if (!$('#jabatan').val()) {
+                    errorMessage += 'Jabatan belum dipilih\n';
+                    $('#jabatan').next('.select2-container').addClass('is-invalid');
+                    isValid = false;
+                }
+
+                // Check ratings - simple check
+                let ratingCount = 0;
+                $('.rating-input').each(function() {
+                    const val = parseInt($(this).val());
+                    if (val > 0) {
+                        ratingCount++;
+                    }
+                });
+
+                const totalKriteria = $('.rating-input').length;
+                if (ratingCount < totalKriteria) {
+                    errorMessage += 'Belum semua kriteria dinilai (' + ratingCount + '/' + totalKriteria + ')\n';
+                    $('#ratingError').show();
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    // All good, submit the form
+                    form.submit();
+                } else {
+                    // Show alert with errors
+                    alert('Mohon lengkapi data berikut:\n\n' + errorMessage);
+                }
+            });
+
+            // Remove validation styling on change
+            $('#bulan, #tahun').on('change', function() {
+                $(this).removeClass('is-invalid');
+            });
+
+            $('.select2').on('change', function() {
+                $(this).next('.select2-container').removeClass('is-invalid');
+            });
+
+            // Reset form
+            $('#resetBtn').on('click', function(e) {
+                e.preventDefault();
+
+                // Reset Select2
+                $('.select2').val(null).trigger('change');
+
+                // Remove validation
+                $('.select2-container').removeClass('is-invalid');
+                $('#bulan, #tahun').removeClass('is-invalid');
+
+                // Reset to current month/year
+                $('#bulan').val(currentMonth);
+                $('#tahun').val(currentYear);
+
+                // Reset ratings
+                $('.star').removeClass('filled');
+                $('.rating-input').val('0');
+                $('.rating-value').text('0/5').removeClass('bg-success bg-primary bg-info bg-warning bg-danger').addClass('bg-secondary');
+                $('#averageRating').text('0.0 / 5.0');
+                $('#ratingError').hide();
+            });
+
+            // Star Rating Functionality
+            $('.star-rating').each(function() {
+                const $ratingContainer = $(this);
+                const $stars = $ratingContainer.find('.star');
+                const $hiddenInput = $ratingContainer.siblings('.rating-input');
+                const $ratingValue = $ratingContainer.parent().find('.rating-value');
+
+                // Click event
+                $stars.on('click', function() {
+                    const value = $(this).data('value');
+                    $hiddenInput.val(value);
+
+                    // Update stars visual
+                    $stars.each(function() {
+                        if ($(this).data('value') <= value) {
+                            $(this).addClass('filled');
+                        } else {
+                            $(this).removeClass('filled');
+                        }
+                    });
+
+                    // Update badge
+                    $ratingValue.text(value + '/5');
+                    updateBadgeColor($ratingValue, value);
+
+                    // Calculate average
+                    calculateAverage();
+
+                    // Hide rating error if all rated
+                    let allRated = true;
+                    $('.rating-input').each(function() {
+                        const val = $(this).val();
+                        if (!val || val === '0') {
+                            allRated = false;
+                        }
+                    });
+                    if (allRated) {
+                        $('#ratingError').hide();
+                    }
+                });
+
+                // Hover effect
+                $stars.on('mouseenter', function() {
+                    const value = $(this).data('value');
+                    $stars.each(function() {
+                        if ($(this).data('value') <= value) {
+                            $(this).addClass('hover');
+                        } else {
+                            $(this).removeClass('hover');
+                        }
+                    });
+                });
+
+                $ratingContainer.on('mouseleave', function() {
+                    $stars.removeClass('hover');
+                });
+            });
+
+            // Update badge color based on rating
+            function updateBadgeColor($badge, value) {
+                $badge.removeClass('bg-secondary bg-success bg-primary bg-info bg-warning bg-danger');
+                if (value >= 5) {
+                    $badge.addClass('bg-success');
+                } else if (value >= 4) {
+                    $badge.addClass('bg-primary');
+                } else if (value >= 3) {
+                    $badge.addClass('bg-info');
+                } else if (value >= 2) {
+                    $badge.addClass('bg-warning');
+                } else if (value >= 1) {
+                    $badge.addClass('bg-danger');
+                } else {
+                    $badge.addClass('bg-secondary');
+                }
+            }
+
+            // Calculate average rating
+            function calculateAverage() {
+                let total = 0;
+                let count = 0;
+
+                $('.rating-input').each(function() {
+                    const val = parseInt($(this).val());
+                    if (!isNaN(val) && val > 0) {
+                        total += val;
+                        count++;
+                    }
+                });
+
+                const average = count > 0 ? (total / count).toFixed(1) : 0.0;
+                $('#averageRating').text(average + ' / 5.0');
+            }
+        });
+    </script>
+</th:block>
+
+</html>

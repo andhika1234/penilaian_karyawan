@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/master}">
+<head>
+    <title>Penilaian Karyawan</title>
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        .header-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6c757d;
+        }
+        .progress-soft {
+            background-color: rgba(0,0,0,0.05);
+        }
+        .btn-group .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        .btn-group .btn i {
+            font-size: 1rem;
+        }
+        /* SweetAlert2 custom button styling */
+        .swal2-actions .btn {
+            margin: 0 0.25rem;
+            padding: 0.5rem 1.5rem;
+        }
+        .badge {
+            font-size: 0.875rem;
+            padding: 0.35rem 0.65rem;
+        }
+    </style>
+</head>
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Penilaian Karyawan</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="header-title mb-0">Daftar Penilaian Karyawan</h4>
+                        <a th:href="@{/penilaiankaryawan/tambah}" class="btn btn-primary">
+                            <i class="ti ti-star-plus me-1"></i>
+                            Tambah Penilaian
+                        </a>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="penilaianTable" class="table table-striped table-bordered dt-responsive nowrap w-100">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Periode</th>
+                                    <th>Divisi</th>
+                                    <th>Nama Karyawan</th>
+                                    <th>Jabatan</th>
+                                    <th>Nilai Rata-rata</th>
+                                    <th>Kategori</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${penilaianList == null || penilaianList.isEmpty()}">
+                                    <td colspan="8" class="text-center">
+                                        <div class="py-4">
+                                            <i class="ti ti-database-off" style="font-size: 3rem; color: #ccc;"></i>
+                                            <p class="text-muted mt-2">Belum ada data penilaian karyawan</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:each="penilaian, iterStat : ${penilaianList}">
+                                    <td th:text="${iterStat.count}">1</td>
+                                    <td>
+                                        <span th:text="${#temporals.format(penilaian.tanggalPenilaian, 'MMMM yyyy', #locale)}"
+                                              th:if="${penilaian.tanggalPenilaian != null}">Januari 2026</span>
+                                        <span th:unless="${penilaian.tanggalPenilaian != null}">
+                                            <span th:text="${T(java.time.Month).of(penilaian.bulan).getDisplayName(T(java.time.format.TextStyle).FULL, #locale)}">Januari</span>
+                                            <span th:text="${penilaian.tahun}">2026</span>
+                                        </span>
+                                    </td>
+                                    <td th:text="${penilaian.divisi != null ? penilaian.divisi.namaDivisi : (penilaian.karyawan.divisi != null ? penilaian.karyawan.divisi.namaDivisi : '-')}">IT & Technology</td>
+                                    <td th:text="${penilaian.karyawan.namaKaryawan}">Ahmad Fauzi</td>
+                                    <td th:text="${penilaian.jabatan != null ? penilaian.jabatan.namaJabatan : (penilaian.karyawan.jabatan != null ? penilaian.karyawan.jabatan.namaJabatan : '-')}">Software Engineer</td>
+                                    <td>
+                                        <span class="fw-bold" th:text="${#numbers.formatDecimal(penilaian.nilaiRataRata, 1, 2)}">4.5</span>
+                                        <small class="text-muted">/ 5.0</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge"
+                                              th:classappend="${penilaian.kategoriPenilaian == 'Sangat Baik' ? 'bg-success' :
+                                                              (penilaian.kategoriPenilaian == 'Baik' ? 'bg-primary' :
+                                                              (penilaian.kategoriPenilaian == 'Cukup' ? 'bg-info' :
+                                                              (penilaian.kategoriPenilaian == 'Kurang' ? 'bg-warning' : 'bg-danger')))}"
+                                              th:text="${penilaian.kategoriPenilaian}">Sangat Baik</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{/penilaiankaryawan/edit/{id}(id=${penilaian.id})}"
+                                               class="btn btn-sm btn-warning"
+                                               title="Edit">
+                                                <i class="ti ti-edit"></i>
+                                            </a>
+                                            <button type="button"
+                                                    class="btn btn-sm btn-danger btn-delete"
+                                                    title="Hapus"
+                                                    th:data-id="${penilaian.id}"
+                                                    th:data-nama="${penilaian.karyawan.namaKaryawan}"
+                                                    th:data-periode="${#temporals.format(penilaian.tanggalPenilaian, 'MMMM yyyy', #locale)}">
+                                                <i class="ti ti-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="page_css">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css" rel="stylesheet">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+</th:block>
+
+<th:block layout:fragment="page_js">
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+    <!-- DataTables Buttons -->
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        /*<![CDATA[*/
+        $(document).ready(function() {
+            // Show flash messages
+            var resultCode = /*[[${resultCode}]]*/ '';
+            var resultMessage = /*[[${resultMessage}]]*/ '';
+
+            if (resultCode && resultMessage) {
+                if (resultCode === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: resultMessage,
+                        confirmButtonColor: '#0d6efd',
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                } else if (resultCode === 'error') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: resultMessage,
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            }
+
+            // Configure DataTable with order settings
+            var tableConfig = {
+                "language": {
+                    "lengthMenu": "Tampilkan _MENU_ data per halaman",
+                    "zeroRecords": "Data tidak ditemukan",
+                    "info": "Menampilkan halaman _PAGE_ dari _PAGES_",
+                    "infoEmpty": "Tidak ada data yang tersedia",
+                    "infoFiltered": "(difilter dari _MAX_ total data)",
+                    "search": "Cari:",
+                    "paginate": {
+                        "first": "Pertama",
+                        "last": "Terakhir",
+                        "next": "Selanjutnya",
+                        "previous": "Sebelumnya"
+                    }
+                },
+                "pageLength": 10,
+                "responsive": true,
+                "order": [],
+                "columnDefs": [
+                    { "orderable": false, "targets": [7] } // Kolom Aksi tidak bisa di-sort
+                ],
+                "dom": '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>'+
+                       '<"row"<"col-sm-12 col-md-6"B>>'+
+                       '<"row"<"col-sm-12"tr>>'+
+                       '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+
+            };
+
+            // Set order for column 1 descending (avoiding double bracket syntax)
+            tableConfig.order = [];
+            tableConfig.order.push([1, 'desc']);
+
+            // Initialize DataTable
+            $('#penilaianTable').DataTable(tableConfig);
+
+            // Event listener for delete buttons
+            $(document).on('click', '.btn-delete', function() {
+                const namaKaryawan = $(this).data('nama');
+                const periode = $(this).data('periode');
+                const id = $(this).data('id');
+                confirmDelete(namaKaryawan, periode, id);
+            });
+        });
+
+        // Delete confirmation function
+        function confirmDelete(namaKaryawan, bulan, id) {
+            Swal.fire({
+                title: 'Hapus Penilaian?',
+                html: 'Apakah Anda yakin ingin menghapus penilaian <strong>' + namaKaryawan + '</strong> bulan <strong>' + bulan + '</strong>?<br><small class="text-muted">Data yang dihapus tidak dapat dikembalikan.</small>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="ti ti-trash me-1"></i> Ya, Hapus!',
+                cancelButtonText: '<i class="ti ti-x me-1"></i> Batal',
+                reverseButtons: true,
+                customClass: {
+                    confirmButton: 'btn btn-danger',
+                    cancelButton: 'btn btn-secondary'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirect to delete endpoint
+                    window.location.href = '/penilaiankaryawan/delete/' + id;
+                }
+            });
+        }
+        /*]]>*/
+    </script>
+</th:block>
+
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/master}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Detail User</title>
+
+</head>
+<body class="" data-layout-color="light" data-layout-mode="default" data-layout-size="fluid" data-topbar-color="light"
+      data-leftbar-position="fixed" data-leftbar-color="light" data-leftbar-size="default" data-sidebar-user="true">
+
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="col-md-4">
+
+
+                        </div>
+
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a th:href="@{/home}">Beranda</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Profil User</li>
+                            </ol>
+                        </nav>
+                    </div>
+
+                </div>
+            </div> <!-- end card -->
+        </div><!-- end col-->
+    </div>
+    <!-- end row -->
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+
+                            <tr>
+                                <th>Nama</th>
+                                <td th:text="${data?.getName()}"></td>
+                            </tr>
+                            <tr>
+                                <th>Email</th>
+                                <td th:text="${data?.getEmail()}"></td>
+                            </tr>
+
+                            <tr th:if="${userLogin?.isPengelolaPbj()}">
+                                <th>Nama Sekolah</th>
+                                <td th:text="${data?.getDataSekolah().getNamaSekolah()}"></td>
+                            </tr>
+
+                            <tr>
+                                <th>Peran</th>
+                                <td th:text="${data?.getRole()?.getName()}"></td>
+                            </tr>
+
+                            <tr>
+                                <th>Alamat</th>
+                                <td th:text="${data?.getAddress()}"></td>
+                            </tr>
+
+                            <tr>
+                                <th>Status</th>
+                                <td th:text="${data?.getStatusUser()}"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- end row -->
+
+
+</th:block>
+
+
+<th:block layout:fragment="page_js">
+
+
+</th:block>
+</body>
+</html>
