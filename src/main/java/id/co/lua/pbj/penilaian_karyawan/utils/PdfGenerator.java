@@ -459,5 +459,173 @@ public class PdfGenerator {
 
         document.add(table);
     }
+
+    public static ByteArrayOutputStream generatePenilaianKaryawanReport(List<id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan> penilaianList,
+                                                                        String logoPath,
+                                                                        String companyName,
+                                                                        String companyAddress,
+                                                                        String printDate,
+                                                                        String directorName) throws DocumentException, IOException {
+
+        Document document = new Document(PageSize.A4, 20, 20, 40, 20); // Margin lebih kecil untuk muat lebih banyak kolom
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            // Add header with logo and company info
+            addHeader(document, logoPath, companyName, companyAddress);
+
+            // Add separator line
+            addSeparatorLine(document);
+
+            // Add title
+            addTitle(document, "LAPORAN DATA PENILAIAN KARYAWAN");
+
+            // Add some space
+            document.add(new Paragraph(" "));
+
+            // Add table with penilaian karyawan data
+            addPenilaianKaryawanTable(document, penilaianList);
+
+            // Add signature section with less spacing
+            addSignatureCompact(document, printDate, directorName);
+
+            document.close();
+        } catch (Exception e) {
+            throw e;
+        }
+
+        return outputStream;
+    }
+
+    private static void addPenilaianKaryawanTable(Document document, List<id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan> penilaianList) throws DocumentException {
+        PdfPTable table = new PdfPTable(7);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        try {
+            table.setWidths(new float[]{0.6f, 2.5f, 1.8f, 1.5f, 1.5f, 1.3f, 1.5f});
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+
+        // Add table headers with smaller font
+        addTableHeaderSmall(table, "No");
+        addTableHeaderSmall(table, "Nama Karyawan");
+        addTableHeaderSmall(table, "Divisi");
+        addTableHeaderSmall(table, "Jabatan");
+        addTableHeaderSmall(table, "Periode");
+        addTableHeaderSmall(table, "Nilai");
+        addTableHeaderSmall(table, "Kategori");
+
+        // Add table data
+        int no = 1;
+        String[] bulanNames = {"", "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"};
+
+        for (id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan penilaian : penilaianList) {
+            addTableCellSmall(table, String.valueOf(no++), Element.ALIGN_CENTER);
+            addTableCellSmall(table, penilaian.getKaryawan() != null ? penilaian.getKaryawan().getNamaKaryawan() : "-", Element.ALIGN_LEFT);
+            addTableCellSmall(table, penilaian.getDivisi() != null ? penilaian.getDivisi().getNamaDivisi() : "-", Element.ALIGN_LEFT);
+            addTableCellSmall(table, penilaian.getJabatan() != null ? penilaian.getJabatan().getNamaJabatan() : "-", Element.ALIGN_LEFT);
+
+            // Periode (Bulan-Tahun)
+            String periode = "-";
+            if (penilaian.getBulan() != null && penilaian.getTahun() != null &&
+                penilaian.getBulan() > 0 && penilaian.getBulan() <= 12) {
+                periode = bulanNames[penilaian.getBulan()] + " " + penilaian.getTahun();
+            }
+            addTableCellSmall(table, periode, Element.ALIGN_CENTER);
+
+            addTableCellSmall(table, penilaian.getNilaiRataRata() != null ? String.format("%.2f", penilaian.getNilaiRataRata()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, penilaian.getKategoriPenilaian() != null ? penilaian.getKategoriPenilaian() : "-", Element.ALIGN_CENTER);
+        }
+
+        document.add(table);
+    }
+
+    private static void addTableHeaderSmall(PdfPTable table, String headerText) {
+        PdfPCell cell = new PdfPCell();
+        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+        cell.setPadding(3);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+
+        Paragraph para = new Paragraph(headerText, FONT_SMALL);
+        para.setAlignment(Element.ALIGN_CENTER);
+        cell.addElement(para);
+
+        table.addCell(cell);
+    }
+
+    private static void addTableCellSmall(PdfPTable table, String text, int alignment) {
+        PdfPCell cell = new PdfPCell();
+        cell.setPadding(3);
+        cell.setHorizontalAlignment(alignment);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+
+        Paragraph para = new Paragraph(text != null ? text : "", FONT_SMALL);
+        para.setAlignment(alignment);
+        cell.addElement(para);
+
+        table.addCell(cell);
+    }
+
+    private static void addSignatureCompact(Document document, String printDate, String directorName) throws DocumentException {
+        // Add less space before signature for compact layout
+        document.add(new Paragraph(" "));
+        document.add(new Paragraph(" "));
+
+        PdfPTable signatureTable = new PdfPTable(2);
+        signatureTable.setWidthPercentage(100);
+
+        try {
+            signatureTable.setWidths(new float[]{1, 1});
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+
+        PdfPCell leftCell = new PdfPCell();
+        leftCell.setBorder(Rectangle.NO_BORDER);
+        leftCell.addElement(new Paragraph(" "));
+        signatureTable.addCell(leftCell);
+
+        // Right cell (signature section)
+        PdfPCell rightCell = new PdfPCell();
+        rightCell.setBorder(Rectangle.NO_BORDER);
+        rightCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+        // Date and location
+        Paragraph datePara = new Paragraph("Jakarta, " + printDate, FONT_SMALL);
+        datePara.setAlignment(Element.ALIGN_CENTER);
+        rightCell.addElement(datePara);
+
+        // Add space
+        rightCell.addElement(new Paragraph(" ", FONT_SMALL));
+
+        // Position title
+        Paragraph positionPara = new Paragraph("Direktur", FONT_SMALL);
+        positionPara.setAlignment(Element.ALIGN_CENTER);
+        rightCell.addElement(positionPara);
+
+        // Add space for signature
+        rightCell.addElement(new Paragraph(" ", FONT_SMALL));
+        rightCell.addElement(new Paragraph(" ", FONT_SMALL));
+
+        // Signature line
+        Paragraph signatureLine = new Paragraph("_______________________", FONT_SMALL);
+        signatureLine.setAlignment(Element.ALIGN_CENTER);
+        rightCell.addElement(signatureLine);
+
+        // Director name
+        Paragraph namePara = new Paragraph(directorName, FONT_SMALL);
+        namePara.setAlignment(Element.ALIGN_CENTER);
+        rightCell.addElement(namePara);
+
+        signatureTable.addCell(rightCell);
+        document.add(signatureTable);
+    }
 }
 

@@ -63,10 +63,16 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="header-title mb-0">Daftar Penilaian Karyawan</h4>
-                        <a th:href="@{/penilaiankaryawan/tambah}" class="btn btn-primary">
-                            <i class="ti ti-star-plus me-1"></i>
-                            Tambah Penilaian
-                        </a>
+                        <div>
+                            <a th:href="@{/penilaiankaryawan/cetak-pdf}" class="btn btn-danger me-2" target="_blank">
+                                <i class="ti ti-file-type-pdf me-1"></i>
+                                Cetak PDF
+                            </a>
+                            <a th:href="@{/penilaiankaryawan/tambah}" class="btn btn-primary">
+                                <i class="ti ti-star-plus me-1"></i>
+                                Tambah Penilaian
+                            </a>
+                        </div>
                     </div>
 
                     <div class="table-responsive">
