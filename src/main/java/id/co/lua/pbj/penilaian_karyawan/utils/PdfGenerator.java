@@ -251,5 +251,73 @@ public class PdfGenerator {
         signatureTable.addCell(rightCell);
         document.add(signatureTable);
     }
+
+    public static ByteArrayOutputStream generateDivisiReport(List<id.co.lua.pbj.penilaian_karyawan.model.apps.Divisi> divisiList,
+                                                             String logoPath,
+                                                             String companyName,
+                                                             String companyAddress,
+                                                             String printDate,
+                                                             String directorName) throws DocumentException, IOException {
+
+        Document document = new Document(PageSize.A4, 36, 36, 54, 36);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            // Add header with logo and company info
+            addHeader(document, logoPath, companyName, companyAddress);
+
+            // Add separator line
+            addSeparatorLine(document);
+
+            // Add title
+            addTitle(document, "LAPORAN DATA DIVISI");
+
+            // Add some space
+            document.add(new Paragraph(" "));
+
+            // Add table with division data
+            addDivisiTable(document, divisiList);
+
+            // Add signature section
+            addSignature(document, printDate, directorName);
+
+            document.close();
+        } catch (Exception e) {
+            throw e;
+        }
+
+        return outputStream;
+    }
+
+    private static void addDivisiTable(Document document, List<id.co.lua.pbj.penilaian_karyawan.model.apps.Divisi> divisiList) throws DocumentException {
+        PdfPTable table = new PdfPTable(3);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        try {
+            table.setWidths(new float[]{1, 4, 2});
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+
+        // Add table headers
+        addTableHeader(table, "No");
+        addTableHeader(table, "Nama Divisi");
+        addTableHeader(table, "Status");
+
+        // Add table data
+        int no = 1;
+        for (id.co.lua.pbj.penilaian_karyawan.model.apps.Divisi divisi : divisiList) {
+            addTableCell(table, String.valueOf(no++), Element.ALIGN_CENTER);
+            addTableCell(table, divisi.getNamaDivisi(), Element.ALIGN_LEFT);
+            addTableCell(table, divisi.getStatusAktif() ? "Aktif" : "Tidak Aktif", Element.ALIGN_CENTER);
+        }
+
+        document.add(table);
+    }
 }
 
