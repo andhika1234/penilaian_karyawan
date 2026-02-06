@@ -89,6 +89,12 @@
                                     <input type="hidden" name="tahun" id="tahunInput" th:value="${selectedTahun}">
                                 </div>
                                 <div class="col-md-8 text-end">
+                                    <a th:href="@{/pengumumanperingkat/cetak-pdf(bulan=${selectedBulan},tahun=${selectedTahun})}"
+                                       class="btn btn-danger me-2"
+                                       target="_blank">
+                                        <i class="ti ti-file-type-pdf me-1"></i>
+                                        Cetak PDF
+                                    </a>
                                     <button type="submit" class="btn btn-primary" id="btnFilter">
                                         <i class="ti ti-filter me-1"></i>
                                         Filter

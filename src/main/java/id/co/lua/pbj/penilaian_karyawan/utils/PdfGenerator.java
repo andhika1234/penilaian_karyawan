@@ -627,5 +627,97 @@ public class PdfGenerator {
         signatureTable.addCell(rightCell);
         document.add(signatureTable);
     }
+
+    public static ByteArrayOutputStream generatePengumumanPeringkatReport(List<id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan> peringkatList,
+                                                                          String logoPath,
+                                                                          String companyName,
+                                                                          String companyAddress,
+                                                                          String printDate,
+                                                                          String directorName,
+                                                                          Integer bulan,
+                                                                          Integer tahun) throws DocumentException, IOException {
+
+        Document document = new Document(PageSize.A4, 20, 20, 40, 20);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            // Add header with logo and company info
+            addHeader(document, logoPath, companyName, companyAddress);
+
+            // Add separator line
+            addSeparatorLine(document);
+
+            // Add title with periode
+            String[] bulanNames = {"", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"};
+            String titleText = "PENGUMUMAN PERINGKAT KARYAWAN";
+            if (bulan != null && tahun != null && bulan > 0 && bulan <= 12) {
+                titleText += "\nPeriode: " + bulanNames[bulan] + " " + tahun;
+            }
+            addTitle(document, titleText);
+
+            // Add some space
+            document.add(new Paragraph(" "));
+
+            // Add table with peringkat data
+            addPengumumanPeringkatTable(document, peringkatList);
+
+            // Add signature section with less spacing
+            addSignatureCompact(document, printDate, directorName);
+
+            document.close();
+        } catch (Exception e) {
+            throw e;
+        }
+
+        return outputStream;
+    }
+
+    private static void addPengumumanPeringkatTable(Document document, List<id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan> peringkatList) throws DocumentException {
+        PdfPTable table = new PdfPTable(7);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        try {
+            table.setWidths(new float[]{0.7f, 1.1f, 2.5f, 1.8f, 1.8f, 1.3f, 1.3f});
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+
+        // Add table headers with smaller font
+        addTableHeaderSmall(table, "Peringkat");
+        addTableHeaderSmall(table, "NIK");
+        addTableHeaderSmall(table, "Nama Karyawan");
+        addTableHeaderSmall(table, "Divisi");
+        addTableHeaderSmall(table, "Jabatan");
+        addTableHeaderSmall(table, "Bulan");
+        addTableHeaderSmall(table, "Nilai");
+
+        // Add table data
+        int peringkat = 1;
+        String[] bulanNames = {"", "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"};
+
+        for (id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan penilaian : peringkatList) {
+            addTableCellSmall(table, String.valueOf(peringkat++), Element.ALIGN_CENTER);
+            addTableCellSmall(table, penilaian.getKaryawan() != null ? penilaian.getKaryawan().getNik() : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, penilaian.getKaryawan() != null ? penilaian.getKaryawan().getNamaKaryawan() : "-", Element.ALIGN_LEFT);
+            addTableCellSmall(table, penilaian.getDivisi() != null ? penilaian.getDivisi().getNamaDivisi() : "-", Element.ALIGN_LEFT);
+            addTableCellSmall(table, penilaian.getJabatan() != null ? penilaian.getJabatan().getNamaJabatan() : "-", Element.ALIGN_LEFT);
+
+            // Bulan
+            String bulan = "-";
+            if (penilaian.getBulan() != null && penilaian.getBulan() > 0 && penilaian.getBulan() <= 12) {
+                bulan = bulanNames[penilaian.getBulan()];
+            }
+            addTableCellSmall(table, bulan, Element.ALIGN_CENTER);
+
+            addTableCellSmall(table, penilaian.getNilaiRataRata() != null ? String.format("%.2f", penilaian.getNilaiRataRata()) : "-", Element.ALIGN_CENTER);
+        }
+
+        document.add(table);
+    }
 }
 
