@@ -719,5 +719,82 @@ public class PdfGenerator {
 
         document.add(table);
     }
+
+    public static ByteArrayOutputStream generateRekapTahunanReport(List<id.co.lua.pbj.penilaian_karyawan.model.dto.RekapTahunanDTO> rekapList,
+                                                                   String logoPath,
+                                                                   String companyName,
+                                                                   String companyAddress,
+                                                                   String printDate,
+                                                                   String directorName,
+                                                                   Integer tahun) throws DocumentException, IOException {
+
+        Document document = new Document(PageSize.A4, 20, 20, 40, 20);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            // Add header with logo and company info
+            addHeader(document, logoPath, companyName, companyAddress);
+
+            // Add separator line
+            addSeparatorLine(document);
+
+            // Add title with tahun
+            String titleText = "LAPORAN REKAP PENILAIAN TAHUNAN";
+            if (tahun != null) {
+                titleText += "\nTahun: " + tahun;
+            }
+            addTitle(document, titleText);
+
+            // Add some space
+            document.add(new Paragraph(" "));
+
+            // Add table with rekap data
+            addRekapTahunanTable(document, rekapList);
+
+            // Add signature section with less spacing
+            addSignatureCompact(document, printDate, directorName);
+
+            document.close();
+        } catch (Exception e) {
+            throw e;
+        }
+
+        return outputStream;
+    }
+
+    private static void addRekapTahunanTable(Document document, List<id.co.lua.pbj.penilaian_karyawan.model.dto.RekapTahunanDTO> rekapList) throws DocumentException {
+        PdfPTable table = new PdfPTable(5);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        try {
+            table.setWidths(new float[]{0.7f, 3.2f, 2f, 2f, 2.5f});
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+
+        // Add table headers with smaller font
+        addTableHeaderSmall(table, "No");
+        addTableHeaderSmall(table, "Nama Karyawan");
+        addTableHeaderSmall(table, "Divisi");
+        addTableHeaderSmall(table, "Jabatan");
+        addTableHeaderSmall(table, "Total Bobot (12 Bulan)");
+
+        // Add table data
+        int no = 1;
+        for (id.co.lua.pbj.penilaian_karyawan.model.dto.RekapTahunanDTO rekap : rekapList) {
+            addTableCellSmall(table, String.valueOf(no++), Element.ALIGN_CENTER);
+            addTableCellSmall(table, rekap.getNamaKaryawan() != null ? rekap.getNamaKaryawan() : "-", Element.ALIGN_LEFT);
+            addTableCellSmall(table, rekap.getNamaDivisi() != null ? rekap.getNamaDivisi() : "-", Element.ALIGN_LEFT);
+            addTableCellSmall(table, rekap.getNamaJabatan() != null ? rekap.getNamaJabatan() : "-", Element.ALIGN_LEFT);
+            addTableCellSmall(table, rekap.getTotalBobotTahunan() != null ? String.format("%.1f", rekap.getTotalBobotTahunan()) : "-", Element.ALIGN_CENTER);
+        }
+
+        document.add(table);
+    }
 }
 
