@@ -2,6 +2,8 @@ package id.co.lua.pbj.penilaian_karyawan.controller.apps;
 
 import id.co.lua.pbj.penilaian_karyawan.model.apps.KriteriaPenilaian;
 import id.co.lua.pbj.penilaian_karyawan.services.models.KriteriaPenilaianService;
+import id.co.lua.pbj.penilaian_karyawan.utils.PdfGenerator;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,7 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Controller
@@ -152,5 +159,52 @@ public class KriteriaPenilaianController {
         }
 
         return "redirect:/kriteria";
+    }
+
+    @GetMapping("cetak-pdf")
+    public void cetakPdf(HttpServletResponse response) {
+        try {
+            // Get all active kriteria data
+            List<KriteriaPenilaian> kriteriaList = kriteriaService.getAllActiveKriteria();
+
+            // Company information - you can customize these values
+            String companyName = "PT. Lua Indonesia";
+            String companyAddress = "Jln. Swadaya 1 No 52 B, RT.12/RW.10, Pejaten Timur , Pasar Minggu, Jakarta Selatan. 12510\nTelepon: 087881146327 | Email: luaindonesia@gmail.com";
+            String logoPath = "/static/scholar-1.0.0/assets/images/perusahaan.png"; // Adjust path as needed
+
+            // Get current date for signature
+            SimpleDateFormat dateFormatSignature = new SimpleDateFormat("dd MMMM yyyy", new Locale("id", "ID"));
+            String printDate = dateFormatSignature.format(new Date());
+
+            // Director information
+            String directorName = "Ilyas. S.Kom, M.T.I";
+
+            // Generate PDF
+            ByteArrayOutputStream pdfStream = PdfGenerator.generateKriteriaReport(
+                kriteriaList,
+                logoPath,
+                companyName,
+                companyAddress,
+                printDate,
+                directorName
+            );
+
+            // Set response headers
+            response.setContentType("application/pdf");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            String fileName = "Laporan_Data_Kriteria_Penilaian_" + dateFormat.format(new Date()) + ".pdf";
+            response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+            response.setContentLength(pdfStream.size());
+
+            // Write PDF to response output stream
+            OutputStream outputStream = response.getOutputStream();
+            pdfStream.writeTo(outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 }

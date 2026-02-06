@@ -319,5 +319,75 @@ public class PdfGenerator {
 
         document.add(table);
     }
+
+    public static ByteArrayOutputStream generateKriteriaReport(List<id.co.lua.pbj.penilaian_karyawan.model.apps.KriteriaPenilaian> kriteriaList,
+                                                               String logoPath,
+                                                               String companyName,
+                                                               String companyAddress,
+                                                               String printDate,
+                                                               String directorName) throws DocumentException, IOException {
+
+        Document document = new Document(PageSize.A4, 36, 36, 54, 36);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            // Add header with logo and company info
+            addHeader(document, logoPath, companyName, companyAddress);
+
+            // Add separator line
+            addSeparatorLine(document);
+
+            // Add title
+            addTitle(document, "LAPORAN DATA KRITERIA PENILAIAN");
+
+            // Add some space
+            document.add(new Paragraph(" "));
+
+            // Add table with kriteria data
+            addKriteriaTable(document, kriteriaList);
+
+            // Add signature section
+            addSignature(document, printDate, directorName);
+
+            document.close();
+        } catch (Exception e) {
+            throw e;
+        }
+
+        return outputStream;
+    }
+
+    private static void addKriteriaTable(Document document, List<id.co.lua.pbj.penilaian_karyawan.model.apps.KriteriaPenilaian> kriteriaList) throws DocumentException {
+        PdfPTable table = new PdfPTable(4);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        try {
+            table.setWidths(new float[]{1, 2, 4, 2});
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+
+        // Add table headers
+        addTableHeader(table, "No");
+        addTableHeader(table, "Kode Kriteria");
+        addTableHeader(table, "Nama Kriteria");
+        addTableHeader(table, "Status");
+
+        // Add table data
+        int no = 1;
+        for (id.co.lua.pbj.penilaian_karyawan.model.apps.KriteriaPenilaian kriteria : kriteriaList) {
+            addTableCell(table, String.valueOf(no++), Element.ALIGN_CENTER);
+            addTableCell(table, kriteria.getKodeKriteria(), Element.ALIGN_CENTER);
+            addTableCell(table, kriteria.getNamaKriteria(), Element.ALIGN_LEFT);
+            addTableCell(table, kriteria.getStatusAktif() ? "Aktif" : "Tidak Aktif", Element.ALIGN_CENTER);
+        }
+
+        document.add(table);
+    }
 }
 
