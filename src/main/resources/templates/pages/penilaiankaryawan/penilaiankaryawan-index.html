@@ -84,14 +84,19 @@
                                     <th>Divisi</th>
                                     <th>Nama Karyawan</th>
                                     <th>Jabatan</th>
-                                    <th>Nilai Rata-rata</th>
-                                    <th>Kategori</th>
+                                    <th>K1</th>
+                                    <th>K2</th>
+                                    <th>K3</th>
+                                    <th>K4</th>
+                                    <th>K5</th>
+                                    <!--<th>Nilai Rata-rata</th>-->
+                                    <!--<th>Kategori</th>-->
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr th:if="${penilaianList == null || penilaianList.isEmpty()}">
-                                    <td colspan="8" class="text-center">
+                                    <td colspan="11" class="text-center">
                                         <div class="py-4">
                                             <i class="ti ti-database-off" style="font-size: 3rem; color: #ccc;"></i>
                                             <p class="text-muted mt-2">Belum ada data penilaian karyawan</p>
@@ -111,7 +116,22 @@
                                     <td th:text="${penilaian.divisi != null ? penilaian.divisi.namaDivisi : (penilaian.karyawan.divisi != null ? penilaian.karyawan.divisi.namaDivisi : '-')}">IT & Technology</td>
                                     <td th:text="${penilaian.karyawan.namaKaryawan}">Ahmad Fauzi</td>
                                     <td th:text="${penilaian.jabatan != null ? penilaian.jabatan.namaJabatan : (penilaian.karyawan.jabatan != null ? penilaian.karyawan.jabatan.namaJabatan : '-')}">Software Engineer</td>
-                                    <td>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary" th:text="${penilaian.k1}">0</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary" th:text="${penilaian.k2}">0</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary" th:text="${penilaian.k3}">0</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary" th:text="${penilaian.k4}">0</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary" th:text="${penilaian.k5}">0</span>
+                                    </td>
+                                    <!--<td>
                                         <span class="fw-bold" th:text="${#numbers.formatDecimal(penilaian.nilaiRataRata, 1, 2)}">4.5</span>
                                         <small class="text-muted">/ 5.0</small>
                                     </td>
@@ -122,7 +142,7 @@
                                                               (penilaian.kategoriPenilaian == 'Cukup' ? 'bg-info' :
                                                               (penilaian.kategoriPenilaian == 'Kurang' ? 'bg-warning' : 'bg-danger')))}"
                                               th:text="${penilaian.kategoriPenilaian}">Sangat Baik</span>
-                                    </td>
+                                    </td>-->
                                     <td>
                                         <div class="btn-group" role="group">
                                             <a th:href="@{/penilaiankaryawan/edit/{id}(id=${penilaian.id})}"
@@ -262,7 +282,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Redirect to delete endpoint
-                    window.location.href = '/penilaiankaryawan/delete/' + id;
+                    window.location.href = '/penilaian_karyawan/penilaiankaryawan/delete/' + id;
                 }
             });
         }

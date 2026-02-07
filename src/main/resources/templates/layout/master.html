@@ -81,11 +81,7 @@
       <div class="content-page">
           <div class="content">
               <div>
-                  <div class="alert alert-dismissible"
-                       th:if="${!resultCode.equals('')}" th:classappend="${resultCode.equals('1') ? 'alert-success' : 'alert-danger'}">
-                      <p class="pull-left" th:text="${resultMessage}"></p>
-                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
+
               </div>
               <div class="container-fluid">
                   <th:block layout:fragment="content"/>

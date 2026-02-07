@@ -99,6 +99,75 @@ public class PenilaianKaryawan extends AuditModel {
     }
 
     /**
+     * Get nilai by kriteria kode (e.g., K-001, K-002, etc.)
+     */
+    public Integer getNilaiByKode(String kodeKriteria) {
+        if (kodeKriteria == null || detailPenilaianList == null) return 0;
+
+        return detailPenilaianList.stream()
+            .filter(detail -> detail.getKriteriaPenilaian() != null &&
+                            kodeKriteria.equals(detail.getKriteriaPenilaian().getKodeKriteria()))
+            .findFirst()
+            .map(DetailPenilaian::getNilai)
+            .orElse(0);
+    }
+
+    /**
+     * Get nilai K1 (kriteria pertama berdasarkan urutan)
+     */
+    public Integer getK1() {
+        return getNilaiByIndex(0);
+    }
+
+    /**
+     * Get nilai K2 (kriteria kedua berdasarkan urutan)
+     */
+    public Integer getK2() {
+        return getNilaiByIndex(1);
+    }
+
+    /**
+     * Get nilai K3 (kriteria ketiga berdasarkan urutan)
+     */
+    public Integer getK3() {
+        return getNilaiByIndex(2);
+    }
+
+    /**
+     * Get nilai K4 (kriteria keempat berdasarkan urutan)
+     */
+    public Integer getK4() {
+        return getNilaiByIndex(3);
+    }
+
+    /**
+     * Get nilai K5 (kriteria kelima berdasarkan urutan)
+     */
+    public Integer getK5() {
+        return getNilaiByIndex(4);
+    }
+
+    /**
+     * Helper method to get nilai by index position
+     */
+    private Integer getNilaiByIndex(int index) {
+        if (detailPenilaianList == null || detailPenilaianList.isEmpty()) return 0;
+        if (index >= detailPenilaianList.size()) return 0;
+
+        // Sort by kodeKriteria to maintain consistent order
+        List<DetailPenilaian> sortedDetails = detailPenilaianList.stream()
+            .filter(detail -> detail.getKriteriaPenilaian() != null)
+            .sorted((d1, d2) -> {
+                String kode1 = d1.getKriteriaPenilaian().getKodeKriteria();
+                String kode2 = d2.getKriteriaPenilaian().getKodeKriteria();
+                return kode1 != null && kode2 != null ? kode1.compareTo(kode2) : 0;
+            })
+            .toList();
+
+        return sortedDetails.size() > index ? sortedDetails.get(index).getNilai() : 0;
+    }
+
+    /**
      * Calculate total nilai and rata-rata before persisting
      */
     @PrePersist
