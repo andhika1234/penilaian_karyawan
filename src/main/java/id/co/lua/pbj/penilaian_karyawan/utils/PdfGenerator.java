@@ -361,13 +361,13 @@ public class PdfGenerator {
     }
 
     private static void addKriteriaTable(Document document, List<id.co.lua.pbj.penilaian_karyawan.model.apps.KriteriaPenilaian> kriteriaList) throws DocumentException {
-        PdfPTable table = new PdfPTable(4);
+        PdfPTable table = new PdfPTable(5);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10f);
         table.setSpacingAfter(10f);
 
         try {
-            table.setWidths(new float[]{1, 2, 4, 2});
+            table.setWidths(new float[]{1, 2, 4, 2, 2});
         } catch (DocumentException e) {
             e.printStackTrace();
         }
@@ -376,6 +376,7 @@ public class PdfGenerator {
         addTableHeader(table, "No");
         addTableHeader(table, "Kode Kriteria");
         addTableHeader(table, "Nama Kriteria");
+        addTableHeader(table, "Bobot (%)");
         addTableHeader(table, "Status");
 
         // Add table data
@@ -384,6 +385,7 @@ public class PdfGenerator {
             addTableCell(table, String.valueOf(no++), Element.ALIGN_CENTER);
             addTableCell(table, kriteria.getKodeKriteria(), Element.ALIGN_CENTER);
             addTableCell(table, kriteria.getNamaKriteria(), Element.ALIGN_LEFT);
+            addTableCell(table, String.valueOf(kriteria.getBobot()), Element.ALIGN_CENTER);
             addTableCell(table, kriteria.getStatusAktif() ? "Aktif" : "Tidak Aktif", Element.ALIGN_CENTER);
         }
 

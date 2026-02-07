@@ -99,6 +99,7 @@ public class KriteriaPenilaianServiceImpl implements KriteriaPenilaianService {
         KriteriaPenilaian updateData = existingKriteria.get();
         updateData.setKodeKriteria(kriteria.getKodeKriteria());
         updateData.setNamaKriteria(kriteria.getNamaKriteria());
+        updateData.setBobot(kriteria.getBobot());
 
         return kriteriaRepository.save(updateData);
     }

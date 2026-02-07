@@ -104,6 +104,24 @@
                                     Nama kriteria wajib diisi
                                 </div>
                             </div>
+
+                            <!-- Bobot -->
+                            <div class="col-md-12 mb-3">
+                                <label for="bobot" class="form-label">Bobot (%) <span class="text-danger">*</span></label>
+                                <input type="number"
+                                       class="form-control"
+                                       id="bobot"
+                                       name="bobot"
+                                       placeholder="Masukkan bobot dalam persen"
+                                       min="1"
+                                       max="100"
+                                       th:value="${kriteria?.bobot}"
+                                       required>
+                                <div class="invalid-feedback">
+                                    Bobot wajib diisi (1-100)
+                                </div>
+                                <small class="text-muted">Masukkan nilai bobot antara 1-100</small>
+                            </div>
                         </div>
 
                         <div class="row mt-3">

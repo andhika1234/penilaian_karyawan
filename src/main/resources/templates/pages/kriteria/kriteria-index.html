@@ -90,6 +90,7 @@
                                     <th>No</th>
                                     <th>Kode Kriteria</th>
                                     <th>Nama Kriteria</th>
+                                    <th>Bobot (%)</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -98,6 +99,7 @@
                                     <td th:text="${iterStat.count}">1</td>
                                     <td th:text="${kriteria.kodeKriteria}">K-001</td>
                                     <td th:text="${kriteria.namaKriteria}">Kualitas Kerja</td>
+                                    <td th:text="${kriteria.bobot}">20</td>
                                     <td>
                                         <div class="btn-group" role="group">
                                             <a th:href="@{/kriteria/edit/{id}(id=${kriteria.id})}" class="btn btn-sm btn-warning" title="Edit">
@@ -151,7 +153,7 @@
                 "responsive": true,
                 "order": [[0, 'asc']],
                 "columnDefs": [
-                    { "orderable": false, "targets": 3 } // Disable sorting on Action column
+                    { "orderable": false, "targets": 4 } // Disable sorting on Action column
                 ]
             });
 

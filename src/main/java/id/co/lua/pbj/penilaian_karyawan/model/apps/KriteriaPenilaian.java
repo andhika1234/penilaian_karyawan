@@ -31,6 +31,8 @@ public class KriteriaPenilaian extends AuditModel {
     @Column(name = "nama_kriteria", nullable = false)
     private String namaKriteria;
 
+    private Integer bobot;
+
     @Column(name = "status_aktif")
     private Boolean statusAktif = true;
 }
