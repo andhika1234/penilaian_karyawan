@@ -15,13 +15,28 @@ public interface PenilaianKaryawanRepository extends JpaRepository<PenilaianKary
 
     List<PenilaianKaryawan> findByKaryawan(Karyawan karyawan);
 
-    List<PenilaianKaryawan> findByBulanAndTahun(Integer bulan, Integer tahun);
+    @Query("SELECT p FROM PenilaianKaryawan p " +
+           "LEFT JOIN FETCH p.detailPenilaianList d " +
+           "LEFT JOIN FETCH d.kriteriaPenilaian " +
+           "LEFT JOIN FETCH p.karyawan " +
+           "LEFT JOIN FETCH p.divisi " +
+           "LEFT JOIN FETCH p.jabatan " +
+           "WHERE p.bulan = :bulan AND p.tahun = :tahun " +
+           "ORDER BY p.karyawan.namaKaryawan ASC")
+    List<PenilaianKaryawan> findByBulanAndTahun(@Param("bulan") Integer bulan, @Param("tahun") Integer tahun);
 
     List<PenilaianKaryawan> findByTahun(Integer tahun);
 
     List<PenilaianKaryawan> findByStatusAktif(Boolean statusAktif);
 
-    @Query("SELECT p FROM PenilaianKaryawan p WHERE p.statusAktif = true ORDER BY p.tahun DESC, p.bulan DESC, p.karyawan.namaKaryawan ASC")
+    @Query("SELECT p FROM PenilaianKaryawan p " +
+           "LEFT JOIN FETCH p.detailPenilaianList d " +
+           "LEFT JOIN FETCH d.kriteriaPenilaian " +
+           "LEFT JOIN FETCH p.karyawan " +
+           "LEFT JOIN FETCH p.divisi " +
+           "LEFT JOIN FETCH p.jabatan " +
+           "WHERE p.statusAktif = true " +
+           "ORDER BY p.tahun DESC, p.bulan DESC, p.karyawan.namaKaryawan ASC")
     List<PenilaianKaryawan> findAllActivePenilaian();
 
     @Query("SELECT p FROM PenilaianKaryawan p WHERE " +

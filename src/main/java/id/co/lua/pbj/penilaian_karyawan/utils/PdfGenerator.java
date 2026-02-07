@@ -503,13 +503,14 @@ public class PdfGenerator {
     }
 
     private static void addPenilaianKaryawanTable(Document document, List<id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan> penilaianList) throws DocumentException {
-        PdfPTable table = new PdfPTable(7);
+        // Changed from 7 columns to 10 columns (No, Nama, Divisi, Jabatan, Periode, K1, K2, K3, K4, K5)
+        PdfPTable table = new PdfPTable(10);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10f);
         table.setSpacingAfter(10f);
 
         try {
-            table.setWidths(new float[]{0.6f, 2.5f, 1.8f, 1.5f, 1.5f, 1.3f, 1.5f});
+            table.setWidths(new float[]{0.5f, 2f, 1.5f, 1.3f, 1.2f, 0.8f, 0.8f, 0.8f, 0.8f, 0.8f});
         } catch (DocumentException e) {
             e.printStackTrace();
         }
@@ -520,8 +521,14 @@ public class PdfGenerator {
         addTableHeaderSmall(table, "Divisi");
         addTableHeaderSmall(table, "Jabatan");
         addTableHeaderSmall(table, "Periode");
-        addTableHeaderSmall(table, "Nilai");
-        addTableHeaderSmall(table, "Kategori");
+        addTableHeaderSmall(table, "K1");
+        addTableHeaderSmall(table, "K2");
+        addTableHeaderSmall(table, "K3");
+        addTableHeaderSmall(table, "K4");
+        addTableHeaderSmall(table, "K5");
+        // Commented out old columns: Nilai and Kategori
+        // addTableHeaderSmall(table, "Nilai");
+        // addTableHeaderSmall(table, "Kategori");
 
         // Add table data
         int no = 1;
@@ -541,8 +548,16 @@ public class PdfGenerator {
             }
             addTableCellSmall(table, periode, Element.ALIGN_CENTER);
 
-            addTableCellSmall(table, penilaian.getNilaiRataRata() != null ? String.format("%.2f", penilaian.getNilaiRataRata()) : "-", Element.ALIGN_CENTER);
-            addTableCellSmall(table, penilaian.getKategoriPenilaian() != null ? penilaian.getKategoriPenilaian() : "-", Element.ALIGN_CENTER);
+            // Add K1 to K5 columns with actual values from criteria assessment
+            addTableCellSmall(table, penilaian.getK1() != null ? String.valueOf(penilaian.getK1()) : "-", Element.ALIGN_CENTER); // K1
+            addTableCellSmall(table, penilaian.getK2() != null ? String.valueOf(penilaian.getK2()) : "-", Element.ALIGN_CENTER); // K2
+            addTableCellSmall(table, penilaian.getK3() != null ? String.valueOf(penilaian.getK3()) : "-", Element.ALIGN_CENTER); // K3
+            addTableCellSmall(table, penilaian.getK4() != null ? String.valueOf(penilaian.getK4()) : "-", Element.ALIGN_CENTER); // K4
+            addTableCellSmall(table, penilaian.getK5() != null ? String.valueOf(penilaian.getK5()) : "-", Element.ALIGN_CENTER); // K5
+
+            // Commented out old columns: Nilai and Kategori
+            // addTableCellSmall(table, penilaian.getNilaiRataRata() != null ? String.format("%.2f", penilaian.getNilaiRataRata()) : "-", Element.ALIGN_CENTER);
+            // addTableCellSmall(table, penilaian.getKategoriPenilaian() != null ? penilaian.getKategoriPenilaian() : "-", Element.ALIGN_CENTER);
         }
 
         document.add(table);
