@@ -169,6 +169,15 @@ public class NormalisasiService {
         return normalisasiRepository.calculateNilaiReferensiByBulanAndTahun(bulan, tahun);
     }
 
+    /**
+     * Calculate nilai referensi filtered by tahun only (no month filter)
+     * @param tahun Tahun penilaian
+     * @return List of NilaiReferensiDTO
+     */
+    public List<NilaiReferensiDTO> calculateNilaiReferensiByTahun(Integer tahun) {
+        return normalisasiRepository.calculateNilaiReferensiByTahun(tahun);
+    }
+
 
     public void deactivateNormalisasi(Long id) {
         Optional<Normalisasi> normalisasi = normalisasiRepository.findById(id);

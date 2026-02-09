@@ -102,13 +102,14 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box">
-                <h4 class="page-title">Perhitungan SKW (Simple Additive Weighting)</h4>
+                <h4 class="page-title">Perhitungan SKW</h4>
                 <p class="text-muted mb-0">Rangkuman Data Penilaian, Normalisasi, dan Peringkat Karyawan</p>
             </div>
         </div>
     </div>
 
     <!-- Filter Section -->
+    <!--
     <div class="row mb-3">
         <div class="col-12">
             <div class="filter-section">
@@ -134,9 +135,31 @@
                                 <i class="ti ti-refresh me-1"></i>
                                 Reset
                             </button>
+                            <a th:href="@{/perhitunganskw/generate}" class="btn btn-success">
+                                <i class="ti ti-calculator me-1"></i>
+                                Generate Normalisasi
+                            </a>
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    -->
+
+    <!-- Alert Messages -->
+    <div class="row" th:if="${resultCode != null and resultCode != ''}">
+        <div class="col-12">
+            <div th:if="${resultCode == 'success'}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ti ti-circle-check me-2"></i>
+                <span th:text="${resultMessage}">Success message</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div th:if="${resultCode == 'error'}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ti ti-alert-circle me-2"></i>
+                <span th:text="${resultMessage}">Error message</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
     </div>
@@ -238,10 +261,14 @@
                             </thead>
                             <tbody>
                                 <tr th:if="${normalisasiList == null || normalisasiList.isEmpty()}">
-                                    <td colspan="11" class="text-center">
+                                    <td colspan="10" class="text-center">
                                         <div class="py-4">
                                             <i class="ti ti-database-off" style="font-size: 3rem; color: #ccc;"></i>
                                             <p class="text-muted mt-2">Belum ada data normalisasi</p>
+                                            <a th:href="@{/perhitunganskw/generate}" class="btn btn-primary btn-sm mt-2">
+                                                <i class="ti ti-calculator me-1"></i>
+                                                Generate Data Normalisasi
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
@@ -304,7 +331,7 @@
                         <table id="peringkatTable" class="table table-striped table-bordered dt-responsive nowrap w-100">
                             <thead>
                                 <tr>
-                                    <th>Peringkat</th>
+                                    <th>No</th>
                                     <th>Periode</th>
                                     <th>Divisi</th>
                                     <th>Nama Karyawan</th>
@@ -322,17 +349,13 @@
                                     <td colspan="11" class="text-center">
                                         <div class="py-4">
                                             <i class="ti ti-database-off" style="font-size: 3rem; color: #ccc;"></i>
-                                            <p class="text-muted mt-2">Belum ada data nilai referensi untuk periode yang dipilih</p>
-                                            <p class="text-muted">Silakan pilih bulan dan tahun, kemudian klik Filter</p>
+                                            <p class="text-muted mt-2">Belum ada data nilai referensi</p>
+                                            <p class="text-muted">Silakan generate data normalisasi terlebih dahulu</p>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr th:each="nilai, iterStat : ${nilaiReferensiList}">
-                                    <td class="text-center">
-                                        <span class="badge badge-rank"
-                                              th:classappend="${iterStat.count == 1 ? 'rank-1' : (iterStat.count == 2 ? 'rank-2' : (iterStat.count == 3 ? 'rank-3' : 'bg-secondary'))}"
-                                              th:text="${iterStat.count}">1</span>
-                                    </td>
+                                    <td class="text-center" th:text="${iterStat.count}">1</td>
                                     <td>
                                         <span th:text="${T(java.time.Month).of(nilai.bulan).getDisplayName(T(java.time.format.TextStyle).FULL, #locale)}">Januari</span>
                                         <span th:text="${nilai.tahun}">2026</span>
@@ -410,6 +433,7 @@
 
     <script>
         $(document).ready(function() {
+            /*
             // Set default month to current month or selected month
             var selectedBulan = [[${selectedBulan}]];
             var selectedTahun = [[${selectedTahun}]];
@@ -444,8 +468,9 @@
             $('#filterBulan').on('change', function() {
                 updateHiddenFields();
             });
+            */
 
-            // Initialize DataTables
+            // Initialize DataTables - Only if there is data
             $('#penilaianTable').DataTable({
                 language: {
                     lengthMenu: "Tampilkan _MENU_ data per halaman",
@@ -465,24 +490,28 @@
                 responsive: true
             });
 
-            $('#normalisasiTable').DataTable({
-                language: {
-                    lengthMenu: "Tampilkan _MENU_ data per halaman",
-                    zeroRecords: "Data tidak ditemukan",
-                    info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                    infoEmpty: "Tidak ada data yang tersedia",
-                    infoFiltered: "(difilter dari _MAX_ total data)",
-                    search: "Cari:",
-                    paginate: {
-                        first: "Pertama",
-                        last: "Terakhir",
-                        next: "Selanjutnya",
-                        previous: "Sebelumnya"
-                    }
-                },
-                pageLength: 10,
-                responsive: true
-            });
+            // Only initialize DataTable for normalisasiTable if there is data
+            var hasNormalisasiData = [[${normalisasiList != null && !normalisasiList.isEmpty()}]];
+            if (hasNormalisasiData) {
+                $('#normalisasiTable').DataTable({
+                    language: {
+                        lengthMenu: "Tampilkan _MENU_ data per halaman",
+                        zeroRecords: "Data tidak ditemukan",
+                        info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                        infoEmpty: "Tidak ada data yang tersedia",
+                        infoFiltered: "(difilter dari _MAX_ total data)",
+                        search: "Cari:",
+                        paginate: {
+                            first: "Pertama",
+                            last: "Terakhir",
+                            next: "Selanjutnya",
+                            previous: "Sebelumnya"
+                        }
+                    },
+                    pageLength: 10,
+                    responsive: true
+                });
+            }
 
             // Only initialize DataTable for peringkatTable if there is data
             var hasNilaiReferensiData = [[${nilaiReferensiList != null && !nilaiReferensiList.isEmpty()}]];
@@ -511,6 +540,7 @@
                 });
             }
 
+            /*
             // Handle form submission
             $('#filterForm').on('submit', function(e) {
                 e.preventDefault();
@@ -528,6 +558,7 @@
                 $('#tahunInput').val(year);
                 $('#filterForm').submit();
             });
+            */
         });
     </script>
 </th:block>
