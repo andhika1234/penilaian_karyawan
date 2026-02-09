@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/master}">
+<head>
+    <title>Normalisasi Penilaian Karyawan</title>
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        .header-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6c757d;
+        }
+        .progress-soft {
+            background-color: rgba(0,0,0,0.05);
+        }
+        .btn-group .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        .btn-group .btn i {
+            font-size: 1rem;
+        }
+        .badge {
+            font-size: 0.875rem;
+            padding: 0.35rem 0.65rem;
+        }
+        .badge-normalisasi {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Normalisasi Penilaian Karyawan</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="header-title mb-0">Daftar Normalisasi Penilaian</h4>
+                        <div>
+                            <a th:href="@{/normalisasi/generate}" class="btn btn-success me-2">
+                                <i class="ti ti-refresh me-1"></i>
+                                Generate Semua Data
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Alert Messages -->
+                    <div th:if="${resultCode == 'success'}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="ti ti-circle-check me-2"></i>
+                        <span th:text="${resultMessage}">Success message</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div th:if="${resultCode == 'error'}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="ti ti-alert-circle me-2"></i>
+                        <span th:text="${resultMessage}">Error message</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="normalisasiTable" class="table table-striped table-bordered dt-responsive nowrap w-100">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Periode</th>
+                                    <th>Divisi</th>
+                                    <th>Nama Karyawan</th>
+                                    <th>Jabatan</th>
+                                    <th>K1 (N)</th>
+                                    <th>K2 (N)</th>
+                                    <th>K3 (N)</th>
+                                    <th>K4 (N)</th>
+                                    <th>K5 (N)</th>
+                                    <th>Total</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${normalisasiList == null || normalisasiList.isEmpty()}">
+                                    <td colspan="12" class="text-center">
+                                        <div class="py-4">
+                                            <i class="ti ti-database-off" style="font-size: 3rem; color: #ccc;"></i>
+                                            <p class="text-muted mt-2">Belum ada data normalisasi</p>
+                                            <a th:href="@{/normalisasi/generate}" class="btn btn-primary btn-sm mt-2">
+                                                <i class="ti ti-refresh me-1"></i>
+                                                Generate Data Normalisasi
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:each="normalisasi, iterStat : ${normalisasiList}">
+                                    <td th:text="${iterStat.count}">1</td>
+                                    <td>
+                                        <span th:text="${#temporals.format(normalisasi.tanggalPenilaian, 'MMMM yyyy', #locale)}"
+                                              th:if="${normalisasi.tanggalPenilaian != null}">Januari 2026</span>
+                                        <span th:unless="${normalisasi.tanggalPenilaian != null}">
+                                            <span th:text="${T(java.time.Month).of(normalisasi.bulan).getDisplayName(T(java.time.format.TextStyle).FULL, #locale)}">Januari</span>
+                                            <span th:text="${normalisasi.tahun}">2026</span>
+                                        </span>
+                                    </td>
+                                    <td th:text="${normalisasi.divisi != null ? normalisasi.divisi.namaDivisi : (normalisasi.karyawan.divisi != null ? normalisasi.karyawan.divisi.namaDivisi : '-')}">IT & Technology</td>
+                                    <td th:text="${normalisasi.karyawan.namaKaryawan}">Ahmad Fauzi</td>
+                                    <td th:text="${normalisasi.jabatan != null ? normalisasi.jabatan.namaJabatan : (normalisasi.karyawan.jabatan != null ? normalisasi.karyawan.jabatan.namaJabatan : '-')}">Software Engineer</td>
+                                    <td class="text-center">
+                                        <span class="badge badge-normalisasi"
+                                              th:text="${#numbers.formatDecimal(normalisasi.k1Normalisasi, 1, 2)}">0.00</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge badge-normalisasi"
+                                              th:text="${#numbers.formatDecimal(normalisasi.k2Normalisasi, 1, 2)}">0.00</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge badge-normalisasi"
+                                              th:text="${#numbers.formatDecimal(normalisasi.k3Normalisasi, 1, 2)}">0.00</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge badge-normalisasi"
+                                              th:text="${#numbers.formatDecimal(normalisasi.k4Normalisasi, 1, 2)}">0.00</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge badge-normalisasi"
+                                              th:text="${#numbers.formatDecimal(normalisasi.k5Normalisasi, 1, 2)}">0.00</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="fw-bold text-success"
+                                              th:text="${#numbers.formatDecimal(normalisasi.totalNormalisasi, 1, 2)}">0.00</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{/normalisasi/delete/{id}(id=${normalisasi.id})}"
+                                               class="btn btn-sm btn-danger"
+                                               title="Hapus"
+                                               onclick="return confirm('Apakah Anda yakin ingin menghapus data normalisasi ini?')">
+                                                <i class="ti ti-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="customJs">
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            $('#normalisasiTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json"
+                },
+                "pageLength": 10,
+                "order": [[1, 'desc']], // Order by periode descending
+                "columnDefs": [
+                    { "orderable": false, "targets": 11 } // Disable ordering on action column
+                ]
+            });
+
+            // Auto hide alerts after 5 seconds
+            setTimeout(function() {
+                $('.alert').fadeOut('slow');
+            }, 5000);
+        });
+    </script>
+</th:block>
+
+</html>
+
