@@ -5,6 +5,9 @@
       layout:decorate="~{layout/master}">
 <head>
     <title>Normalisasi Penilaian Karyawan</title>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
     <style>
         body {
             background-color: #f4f6f9;
@@ -100,7 +103,7 @@
                                     <th>K4 (N)</th>
                                     <th>K5 (N)</th>
                                     <th>Total</th>
-                                    <th>Aksi</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -153,16 +156,7 @@
                                         <span class="fw-bold text-success"
                                               th:text="${#numbers.formatDecimal(normalisasi.totalNormalisasi, 1, 2)}">0.00</span>
                                     </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a th:href="@{/normalisasi/delete/{id}(id=${normalisasi.id})}"
-                                               class="btn btn-sm btn-danger"
-                                               title="Hapus"
-                                               onclick="return confirm('Apakah Anda yakin ingin menghapus data normalisasi ini?')">
-                                                <i class="ti ti-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
+
                                 </tr>
                             </tbody>
                         </table>
@@ -174,26 +168,91 @@
 
 </th:block>
 
-<th:block layout:fragment="customJs">
+<th:block layout:fragment="page_js">
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
+        /*<![CDATA[*/
         $(document).ready(function() {
+            // Show flash messages with SweetAlert2
+            var resultCode = /*[[${resultCode}]]*/ '';
+            var resultMessage = /*[[${resultMessage}]]*/ '';
+
+            if (resultCode && resultMessage) {
+                if (resultCode === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: resultMessage,
+                        confirmButtonColor: '#0d6efd',
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                } else if (resultCode === 'error') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: resultMessage,
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            }
+
             // Initialize DataTable
             $('#normalisasiTable').DataTable({
                 "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json"
+                    "lengthMenu": "Tampilkan _MENU_ data per halaman",
+                    "zeroRecords": "Data tidak ditemukan",
+                    "info": "Menampilkan halaman _PAGE_ dari _PAGES_",
+                    "infoEmpty": "Tidak ada data yang tersedia",
+                    "infoFiltered": "(difilter dari _MAX_ total data)",
+                    "search": "Cari:",
+                    "paginate": {
+                        "first": "Pertama",
+                        "last": "Terakhir",
+                        "next": "Selanjutnya",
+                        "previous": "Sebelumnya"
+                    }
                 },
                 "pageLength": 10,
-                "order": [[1, 'desc']], // Order by periode descending
+                "responsive": true,
+                "order": [],
                 "columnDefs": [
-                    { "orderable": false, "targets": 11 } // Disable ordering on action column
-                ]
+                    { "orderable": false, "targets": 11 }
+                ],
+                "dom": '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                       '<"row"<"col-sm-12"tr>>' +
+                       '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
             });
 
-            // Auto hide alerts after 5 seconds
-            setTimeout(function() {
-                $('.alert').fadeOut('slow');
-            }, 5000);
+            // Delete confirmation with SweetAlert2
+            $('.btn-delete').on('click', function(e) {
+                e.preventDefault();
+                var deleteUrl = $(this).attr('href');
+
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data normalisasi ini akan dihapus!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = deleteUrl;
+                    }
+                });
+            });
         });
+        /*]]>*/
     </script>
 </th:block>
 

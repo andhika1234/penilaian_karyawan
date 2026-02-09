@@ -22,58 +22,41 @@ public class NormalisasiService {
     @Autowired
     private PenilaianKaryawanRepository penilaianKaryawanRepository;
 
-    /**
-     * Get all active normalisasi
-     */
+
     public List<Normalisasi> getAllActiveNormalisasi() {
         return normalisasiRepository.findByStatusAktifTrueOrderByTahunDescBulanDesc();
     }
 
-    /**
-     * Get normalisasi by id
-     */
+
     public Optional<Normalisasi> getNormalisasiById(Long id) {
         return normalisasiRepository.findById(id);
     }
 
-    /**
-     * Get normalisasi by penilaian karyawan id
-     */
+
     public Optional<Normalisasi> getNormalisasiByPenilaianKaryawanId(Long penilaianKaryawanId) {
         return normalisasiRepository.findByPenilaianKaryawanIdAndStatusAktifTrue(penilaianKaryawanId);
     }
 
-    /**
-     * Get normalisasi by karyawan id
-     */
+
     public List<Normalisasi> getNormalisasiByKaryawanId(Long karyawanId) {
         return normalisasiRepository.findByKaryawanIdAndStatusAktifTrueOrderByTahunDescBulanDesc(karyawanId);
     }
 
-    /**
-     * Get normalisasi by tahun
-     */
+
     public List<Normalisasi> getNormalisasiByTahun(Integer tahun) {
         return normalisasiRepository.findByTahunAndStatusAktifTrueOrderByBulanDesc(tahun);
     }
 
-    /**
-     * Get normalisasi by bulan and tahun
-     */
+
     public List<Normalisasi> getNormalisasiByBulanAndTahun(Integer bulan, Integer tahun) {
         return normalisasiRepository.findByBulanAndTahunAndStatusAktifTrue(bulan, tahun);
     }
 
-    /**
-     * Search normalisasi
-     */
+
     public List<Normalisasi> searchNormalisasi(String keyword) {
         return normalisasiRepository.searchNormalisasi(keyword);
     }
 
-    /**
-     * Save or update normalisasi from penilaian karyawan
-     */
     public Normalisasi saveNormalisasiFromPenilaian(Long penilaianKaryawanId) {
         Optional<PenilaianKaryawan> penilaianOpt = penilaianKaryawanRepository.findById(penilaianKaryawanId);
 
@@ -114,9 +97,7 @@ public class NormalisasiService {
         return normalisasiRepository.save(normalisasi);
     }
 
-    /**
-     * Generate normalisasi for all penilaian karyawan
-     */
+
     public int generateAllNormalisasi() {
         List<PenilaianKaryawan> penilaianList = penilaianKaryawanRepository.findAllActivePenilaian();
         int count = 0;
@@ -134,9 +115,7 @@ public class NormalisasiService {
         return count;
     }
 
-    /**
-     * Delete normalisasi (soft delete)
-     */
+
     public void deleteNormalisasi(Long id) {
         Optional<Normalisasi> normalisasi = normalisasiRepository.findById(id);
 
@@ -148,9 +127,7 @@ public class NormalisasiService {
         normalisasiRepository.save(normalisasi.get());
     }
 
-    /**
-     * Permanent delete normalisasi
-     */
+
     public void permanentDeleteNormalisasi(Long id) {
         Optional<Normalisasi> normalisasi = normalisasiRepository.findById(id);
 
@@ -161,9 +138,7 @@ public class NormalisasiService {
         normalisasiRepository.delete(normalisasi.get());
     }
 
-    /**
-     * Activate normalisasi
-     */
+
     public void activateNormalisasi(Long id) {
         Optional<Normalisasi> normalisasi = normalisasiRepository.findById(id);
 
@@ -175,9 +150,7 @@ public class NormalisasiService {
         normalisasiRepository.save(normalisasi.get());
     }
 
-    /**
-     * Deactivate normalisasi
-     */
+
     public void deactivateNormalisasi(Long id) {
         Optional<Normalisasi> normalisasi = normalisasiRepository.findById(id);
 
@@ -189,9 +162,7 @@ public class NormalisasiService {
         normalisasiRepository.save(normalisasi.get());
     }
 
-    /**
-     * Get average total normalisasi by karyawan
-     */
+
     public Double getAverageTotalNormalisasiByKaryawan(Long karyawanId) {
         return normalisasiRepository.getAverageTotalNormalisasiByKaryawan(karyawanId);
     }
