@@ -3,6 +3,9 @@ package id.co.lua.pbj.penilaian_karyawan.utils;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import id.co.lua.pbj.penilaian_karyawan.model.apps.Karyawan;
+import id.co.lua.pbj.penilaian_karyawan.model.apps.Normalisasi;
+import id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan;
+import id.co.lua.pbj.penilaian_karyawan.model.dto.NilaiReferensiDTO;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -502,66 +505,6 @@ public class PdfGenerator {
         return outputStream;
     }
 
-    private static void addPenilaianKaryawanTable(Document document, List<id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan> penilaianList) throws DocumentException {
-        // Changed from 7 columns to 10 columns (No, Nama, Divisi, Jabatan, Periode, K1, K2, K3, K4, K5)
-        PdfPTable table = new PdfPTable(10);
-        table.setWidthPercentage(100);
-        table.setSpacingBefore(10f);
-        table.setSpacingAfter(10f);
-
-        try {
-            table.setWidths(new float[]{0.5f, 2f, 1.5f, 1.3f, 1.2f, 0.8f, 0.8f, 0.8f, 0.8f, 0.8f});
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        }
-
-        // Add table headers with smaller font
-        addTableHeaderSmall(table, "No");
-        addTableHeaderSmall(table, "Nama Karyawan");
-        addTableHeaderSmall(table, "Divisi");
-        addTableHeaderSmall(table, "Jabatan");
-        addTableHeaderSmall(table, "Periode");
-        addTableHeaderSmall(table, "K1");
-        addTableHeaderSmall(table, "K2");
-        addTableHeaderSmall(table, "K3");
-        addTableHeaderSmall(table, "K4");
-        addTableHeaderSmall(table, "K5");
-        // Commented out old columns: Nilai and Kategori
-        // addTableHeaderSmall(table, "Nilai");
-        // addTableHeaderSmall(table, "Kategori");
-
-        // Add table data
-        int no = 1;
-        String[] bulanNames = {"", "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"};
-
-        for (id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan penilaian : penilaianList) {
-            addTableCellSmall(table, String.valueOf(no++), Element.ALIGN_CENTER);
-            addTableCellSmall(table, penilaian.getKaryawan() != null ? penilaian.getKaryawan().getNamaKaryawan() : "-", Element.ALIGN_LEFT);
-            addTableCellSmall(table, penilaian.getDivisi() != null ? penilaian.getDivisi().getNamaDivisi() : "-", Element.ALIGN_LEFT);
-            addTableCellSmall(table, penilaian.getJabatan() != null ? penilaian.getJabatan().getNamaJabatan() : "-", Element.ALIGN_LEFT);
-
-            // Periode (Bulan-Tahun)
-            String periode = "-";
-            if (penilaian.getBulan() != null && penilaian.getTahun() != null &&
-                penilaian.getBulan() > 0 && penilaian.getBulan() <= 12) {
-                periode = bulanNames[penilaian.getBulan()] + " " + penilaian.getTahun();
-            }
-            addTableCellSmall(table, periode, Element.ALIGN_CENTER);
-
-            // Add K1 to K5 columns with actual values from criteria assessment
-            addTableCellSmall(table, penilaian.getK1() != null ? String.valueOf(penilaian.getK1()) : "-", Element.ALIGN_CENTER); // K1
-            addTableCellSmall(table, penilaian.getK2() != null ? String.valueOf(penilaian.getK2()) : "-", Element.ALIGN_CENTER); // K2
-            addTableCellSmall(table, penilaian.getK3() != null ? String.valueOf(penilaian.getK3()) : "-", Element.ALIGN_CENTER); // K3
-            addTableCellSmall(table, penilaian.getK4() != null ? String.valueOf(penilaian.getK4()) : "-", Element.ALIGN_CENTER); // K4
-            addTableCellSmall(table, penilaian.getK5() != null ? String.valueOf(penilaian.getK5()) : "-", Element.ALIGN_CENTER); // K5
-
-            // Commented out old columns: Nilai and Kategori
-            // addTableCellSmall(table, penilaian.getNilaiRataRata() != null ? String.format("%.2f", penilaian.getNilaiRataRata()) : "-", Element.ALIGN_CENTER);
-            // addTableCellSmall(table, penilaian.getKategoriPenilaian() != null ? penilaian.getKategoriPenilaian() : "-", Element.ALIGN_CENTER);
-        }
-
-        document.add(table);
-    }
 
     private static void addTableHeaderSmall(PdfPTable table, String headerText) {
         PdfPCell cell = new PdfPCell();
@@ -913,5 +856,316 @@ public class PdfGenerator {
 
         document.add(table);
     }
+
+    public static ByteArrayOutputStream generatePerhitunganSkwReport(List<PenilaianKaryawan> penilaianList,
+                                                                      List<Normalisasi> normalisasiList,
+                                                                      List<NilaiReferensiDTO> nilaiReferensiList,
+                                                                      String logoPath,
+                                                                      String companyName,
+                                                                      String companyAddress,
+                                                                      String printDate,
+                                                                      String directorName,
+                                                                      Integer tahun) throws DocumentException, IOException {
+
+        Document document = new Document(PageSize.A4.rotate(), 36, 36, 54, 36);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            // Add header with logo and company info
+            addHeader(document, logoPath, companyName, companyAddress);
+
+            // Add separator line
+            addSeparatorLine(document);
+
+            // Add title
+            String title = "LAPORAN PERHITUNGAN SKW (SIMPLE ADDITIVE WEIGHTING)";
+            if (tahun != null) {
+                title += " - TAHUN " + tahun;
+            }
+            addTitle(document, title);
+
+            // Add some space
+            document.add(new Paragraph(" "));
+
+            // Section 1: Penilaian Karyawan
+            Paragraph section1Title = new Paragraph("1. DATA PENILAIAN KARYAWAN", FONT_HEADER);
+            section1Title.setSpacingBefore(5f);
+            section1Title.setSpacingAfter(5f);
+            document.add(section1Title);
+            addPenilaianKaryawanTable(document, penilaianList);
+
+            // Add page break
+            document.newPage();
+
+            // Re-add header on new page
+            addHeader(document, logoPath, companyName, companyAddress);
+            addSeparatorLine(document);
+
+            // Section 2: Normalisasi
+            Paragraph section2Title = new Paragraph("2. DATA NORMALISASI", FONT_HEADER);
+            section2Title.setSpacingBefore(5f);
+            section2Title.setSpacingAfter(5f);
+            document.add(section2Title);
+            addNormalisasiTableForSkw(document, normalisasiList);
+
+            // Add page break
+            document.newPage();
+
+            // Re-add header on new page
+            addHeader(document, logoPath, companyName, companyAddress);
+            addSeparatorLine(document);
+
+            // Section 3: Nilai Akhir (Nilai Referensi)
+            Paragraph section3Title = new Paragraph("3. NILAI AKHIR (NILAI REFERENSI)", FONT_HEADER);
+            section3Title.setSpacingBefore(5f);
+            section3Title.setSpacingAfter(5f);
+            document.add(section3Title);
+
+            // Add info about formula
+            Paragraph formulaPara = new Paragraph(
+                "Formula: Nilai Referensi = (K1 × Bobot K1) + (K2 × Bobot K2) + (K3 × Bobot K3) + (K4 × Bobot K4) + (K5 × Bobot K5)",
+                FONT_SMALL
+            );
+            formulaPara.setAlignment(Element.ALIGN_CENTER);
+            formulaPara.setSpacingAfter(5f);
+            document.add(formulaPara);
+
+            addPerhitunganSkwTable(document, nilaiReferensiList);
+
+            // Add signature section
+            addSignature(document, printDate, directorName);
+
+            document.close();
+        } catch (Exception e) {
+            throw e;
+        }
+
+        return outputStream;
+    }
+
+    private static void addPenilaianKaryawanTable(Document document, List<PenilaianKaryawan> penilaianList) throws DocumentException {
+        PdfPTable table = new PdfPTable(10);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        try {
+            table.setWidths(new float[]{0.5f, 1.2f, 1.5f, 2f, 1.5f, 0.8f, 0.8f, 0.8f, 0.8f, 0.8f});
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+
+        // Header row
+        addTableHeaderSmall(table, "No");
+        addTableHeaderSmall(table, "Periode");
+        addTableHeaderSmall(table, "Divisi");
+        addTableHeaderSmall(table, "Nama Karyawan");
+        addTableHeaderSmall(table, "Jabatan");
+        addTableHeaderSmall(table, "K1");
+        addTableHeaderSmall(table, "K2");
+        addTableHeaderSmall(table, "K3");
+        addTableHeaderSmall(table, "K4");
+        addTableHeaderSmall(table, "K5");
+
+        // Data rows
+        int no = 1;
+        for (PenilaianKaryawan penilaian : penilaianList) {
+            addTableCellSmall(table, String.valueOf(no++), Element.ALIGN_CENTER);
+
+            // Periode
+            String periode = "-";
+            if (penilaian.getBulan() != null && penilaian.getTahun() != null) {
+                String[] bulanNames = {"", "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"};
+                periode = bulanNames[penilaian.getBulan()] + " " + penilaian.getTahun();
+            }
+            addTableCellSmall(table, periode, Element.ALIGN_CENTER);
+
+            // Divisi
+            String divisi = "-";
+            if (penilaian.getDivisi() != null) {
+                divisi = penilaian.getDivisi().getNamaDivisi();
+            } else if (penilaian.getKaryawan() != null && penilaian.getKaryawan().getDivisi() != null) {
+                divisi = penilaian.getKaryawan().getDivisi().getNamaDivisi();
+            }
+            addTableCellSmall(table, divisi, Element.ALIGN_LEFT);
+
+            // Nama Karyawan
+            String namaKaryawan = penilaian.getKaryawan() != null ? penilaian.getKaryawan().getNamaKaryawan() : "-";
+            addTableCellSmall(table, namaKaryawan, Element.ALIGN_LEFT);
+
+            // Jabatan
+            String jabatan = "-";
+            if (penilaian.getJabatan() != null) {
+                jabatan = penilaian.getJabatan().getNamaJabatan();
+            } else if (penilaian.getKaryawan() != null && penilaian.getKaryawan().getJabatan() != null) {
+                jabatan = penilaian.getKaryawan().getJabatan().getNamaJabatan();
+            }
+            addTableCellSmall(table, jabatan, Element.ALIGN_LEFT);
+
+            // Kriteria values
+            addTableCellSmall(table, penilaian.getK1() != null ? String.valueOf(penilaian.getK1()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, penilaian.getK2() != null ? String.valueOf(penilaian.getK2()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, penilaian.getK3() != null ? String.valueOf(penilaian.getK3()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, penilaian.getK4() != null ? String.valueOf(penilaian.getK4()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, penilaian.getK5() != null ? String.valueOf(penilaian.getK5()) : "-", Element.ALIGN_CENTER);
+        }
+
+        document.add(table);
+    }
+
+    private static void addNormalisasiTableForSkw(Document document, List<Normalisasi> normalisasiList) throws DocumentException {
+        PdfPTable table = new PdfPTable(10);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        try {
+            table.setWidths(new float[]{0.5f, 1.2f, 1.5f, 2f, 1.5f, 0.8f, 0.8f, 0.8f, 0.8f, 0.8f});
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+
+        // Header row
+        addTableHeaderSmall(table, "No");
+        addTableHeaderSmall(table, "Periode");
+        addTableHeaderSmall(table, "Divisi");
+        addTableHeaderSmall(table, "Nama Karyawan");
+        addTableHeaderSmall(table, "Jabatan");
+        addTableHeaderSmall(table, "K1 (N)");
+        addTableHeaderSmall(table, "K2 (N)");
+        addTableHeaderSmall(table, "K3 (N)");
+        addTableHeaderSmall(table, "K4 (N)");
+        addTableHeaderSmall(table, "K5 (N)");
+
+        // Data rows
+        int no = 1;
+        for (Normalisasi normalisasi : normalisasiList) {
+            addTableCellSmall(table, String.valueOf(no++), Element.ALIGN_CENTER);
+
+            // Periode
+            String periode = "-";
+            if (normalisasi.getBulan() != null && normalisasi.getTahun() != null) {
+                String[] bulanNames = {"", "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"};
+                periode = bulanNames[normalisasi.getBulan()] + " " + normalisasi.getTahun();
+            }
+            addTableCellSmall(table, periode, Element.ALIGN_CENTER);
+
+            // Divisi
+            String divisi = "-";
+            if (normalisasi.getDivisi() != null) {
+                divisi = normalisasi.getDivisi().getNamaDivisi();
+            } else if (normalisasi.getKaryawan() != null && normalisasi.getKaryawan().getDivisi() != null) {
+                divisi = normalisasi.getKaryawan().getDivisi().getNamaDivisi();
+            }
+            addTableCellSmall(table, divisi, Element.ALIGN_LEFT);
+
+            // Nama Karyawan
+            String namaKaryawan = normalisasi.getKaryawan() != null ? normalisasi.getKaryawan().getNamaKaryawan() : "-";
+            addTableCellSmall(table, namaKaryawan, Element.ALIGN_LEFT);
+
+            // Jabatan
+            String jabatan = "-";
+            if (normalisasi.getJabatan() != null) {
+                jabatan = normalisasi.getJabatan().getNamaJabatan();
+            } else if (normalisasi.getKaryawan() != null && normalisasi.getKaryawan().getJabatan() != null) {
+                jabatan = normalisasi.getKaryawan().getJabatan().getNamaJabatan();
+            }
+            addTableCellSmall(table, jabatan, Element.ALIGN_LEFT);
+
+            // Normalisasi values
+            addTableCellSmall(table, normalisasi.getK1Normalisasi() != null ? String.format("%.2f", normalisasi.getK1Normalisasi()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, normalisasi.getK2Normalisasi() != null ? String.format("%.2f", normalisasi.getK2Normalisasi()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, normalisasi.getK3Normalisasi() != null ? String.format("%.2f", normalisasi.getK3Normalisasi()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, normalisasi.getK4Normalisasi() != null ? String.format("%.2f", normalisasi.getK4Normalisasi()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, normalisasi.getK5Normalisasi() != null ? String.format("%.2f", normalisasi.getK5Normalisasi()) : "-", Element.ALIGN_CENTER);
+        }
+
+        document.add(table);
+    }
+
+    private static void addPerhitunganSkwTable(Document document, List<NilaiReferensiDTO> nilaiReferensiList) throws DocumentException {
+        PdfPTable table = new PdfPTable(11);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        try {
+            table.setWidths(new float[]{0.5f, 1.2f, 1.5f, 2f, 1.5f, 1f, 1f, 1f, 1f, 1f, 1.2f});
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+
+        // Header row
+        addTableHeaderSmall(table, "No");
+        addTableHeaderSmall(table, "Periode");
+        addTableHeaderSmall(table, "Divisi");
+        addTableHeaderSmall(table, "Nama Karyawan");
+        addTableHeaderSmall(table, "Jabatan");
+        addTableHeaderSmall(table, "K1 × B1");
+        addTableHeaderSmall(table, "K2 × B2");
+        addTableHeaderSmall(table, "K3 × B3");
+        addTableHeaderSmall(table, "K4 × B4");
+        addTableHeaderSmall(table, "K5 × B5");
+        addTableHeaderSmall(table, "Nilai Referensi");
+
+        // Data rows
+        int no = 1;
+        for (NilaiReferensiDTO nilai : nilaiReferensiList) {
+            addTableCellSmall(table, String.valueOf(no++), Element.ALIGN_CENTER);
+
+            // Periode
+            String periode = "-";
+            if (nilai.getBulan() != null && nilai.getTahun() != null) {
+                String[] bulanNames = {"", "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"};
+                periode = bulanNames[nilai.getBulan()] + " " + nilai.getTahun();
+            }
+            addTableCellSmall(table, periode, Element.ALIGN_CENTER);
+
+            // Divisi
+            addTableCellSmall(table, nilai.getNamaDivisi() != null ? nilai.getNamaDivisi() : "-", Element.ALIGN_LEFT);
+
+            // Nama Karyawan
+            addTableCellSmall(table, nilai.getNamaKaryawan() != null ? nilai.getNamaKaryawan() : "-", Element.ALIGN_LEFT);
+
+            // Jabatan
+            addTableCellSmall(table, nilai.getNamaJabatan() != null ? nilai.getNamaJabatan() : "-", Element.ALIGN_LEFT);
+
+            // K1 × B1
+            String k1Hasil = nilai.getHasilK1() != null ? String.format("%.2f", nilai.getHasilK1()) : "-";
+            addTableCellSmall(table, k1Hasil, Element.ALIGN_CENTER);
+
+            // K2 × B2
+            String k2Hasil = nilai.getHasilK2() != null ? String.format("%.2f", nilai.getHasilK2()) : "-";
+            addTableCellSmall(table, k2Hasil, Element.ALIGN_CENTER);
+
+            // K3 × B3
+            String k3Hasil = nilai.getHasilK3() != null ? String.format("%.2f", nilai.getHasilK3()) : "-";
+            addTableCellSmall(table, k3Hasil, Element.ALIGN_CENTER);
+
+            // K4 × B4
+            String k4Hasil = nilai.getHasilK4() != null ? String.format("%.2f", nilai.getHasilK4()) : "-";
+            addTableCellSmall(table, k4Hasil, Element.ALIGN_CENTER);
+
+            // K5 × B5
+            String k5Hasil = nilai.getHasilK5() != null ? String.format("%.2f", nilai.getHasilK5()) : "-";
+            addTableCellSmall(table, k5Hasil, Element.ALIGN_CENTER);
+
+            // Nilai Referensi (highlighted)
+            String nilaiReferensi = nilai.getNilaiReferensi() != null ? String.format("%.2f", nilai.getNilaiReferensi()) : "-";
+            PdfPCell cell = new PdfPCell(new Phrase(nilaiReferensi, FONT_HEADER));
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setPadding(5);
+            cell.setBackgroundColor(new BaseColor(220, 255, 220)); // Light green background
+            table.addCell(cell);
+        }
+
+        document.add(table);
+    }
 }
+
+
 
