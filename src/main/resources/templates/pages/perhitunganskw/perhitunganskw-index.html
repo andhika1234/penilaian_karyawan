@@ -109,43 +109,16 @@
     </div>
 
     <!-- Filter Section -->
-    <!--
+
     <div class="row mb-3">
         <div class="col-12">
-            <div class="filter-section">
-                <form method="get" th:action="@{/perhitunganskw}" id="filterForm">
-                    <div class="row align-items-end">
-                        <div class="col-md-4">
-                            <label for="filterBulan" class="form-label">Filter Berdasarkan Bulan (untuk Peringkat)</label>
-                            <input type="month"
-                                   class="form-control"
-                                   id="filterBulan"
-                                   name="filterMonth"
-                                   th:value="${selectedTahun != null && selectedBulan != null ? selectedTahun + '-' + (selectedBulan < 10 ? '0' + selectedBulan : selectedBulan) : ''}"
-                                   placeholder="Pilih Bulan">
-                            <input type="hidden" name="bulan" id="bulanInput" th:value="${selectedBulan}">
-                            <input type="hidden" name="tahun" id="tahunInput" th:value="${selectedTahun}">
-                        </div>
-                        <div class="col-md-8 text-end">
-                            <button type="submit" class="btn btn-primary" id="btnFilter">
-                                <i class="ti ti-filter me-1"></i>
-                                Filter
-                            </button>
-                            <button type="button" class="btn btn-secondary" id="btnReset">
-                                <i class="ti ti-refresh me-1"></i>
-                                Reset
-                            </button>
-                            <a th:href="@{/perhitunganskw/generate}" class="btn btn-success">
-                                <i class="ti ti-calculator me-1"></i>
-                                Generate Normalisasi
-                            </a>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            <a th:href="@{/perhitunganskw/generate}" class="btn btn-success">
+                <i class="ti ti-calculator me-1"></i>
+                Generate Normalisasi
+            </a>
         </div>
     </div>
-    -->
+
 
     <!-- Alert Messages -->
     <div class="row" th:if="${resultCode != null and resultCode != ''}">

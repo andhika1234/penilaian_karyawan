@@ -4,7 +4,7 @@
       xmlns:th="http://www.thymeleaf.org"
       layout:decorate="~{layout/master}">
 <head>
-    <title>Executive Dashboard</title>
+    <title>Beranda</title>
     <style>
         body {
             background-color: #f4f6f9;
@@ -25,26 +25,297 @@
             font-weight: 600;
             color: #6c757d;
         }
-        .progress-soft {
-            background-color: rgba(0,0,0,0.05);
+        .welcome-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        .welcome-section h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .welcome-section p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        .podium-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 2rem;
+        }
+        .podium-item {
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .podium-item:hover {
+            transform: scale(1.05);
+        }
+        .podium-rank-2 { order: 1; }
+        .podium-rank-1 { order: 2; }
+        .podium-rank-3 { order: 3; }
+        .podium-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            border: 5px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .podium-rank-1 .podium-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border-width: 6px;
+        }
+        .podium-rank-2 .podium-avatar {
+            background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);
+        }
+        .podium-rank-3 .podium-avatar {
+            background: linear-gradient(135deg, #CD7F32 0%, #A0522D 100%);
+        }
+        .podium-medal {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        .podium-rank-1 .podium-medal { font-size: 3.5rem; }
+        .podium-base {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            padding: 1.5rem;
+            min-width: 200px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .podium-rank-1 .podium-base {
+            padding: 2rem 1.5rem;
+            background: linear-gradient(135deg, #fff9e6 0%, #ffe6b3 100%);
+        }
+        .podium-rank-2 .podium-base {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+        }
+        .podium-rank-3 .podium-base {
+            background: linear-gradient(135deg, #fff5ee 0%, #ffe4d1 100%);
+        }
+        .podium-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .podium-rank-1 .podium-name {
+            font-size: 1.3rem;
+        }
+        .podium-details {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 0.3rem;
+        }
+        .podium-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 0.5rem;
+        }
+        .podium-rank-1 .podium-score {
+            font-size: 1.8rem;
+            color: #FFA500;
+        }
+        .no-data-section {
+            text-align: center;
+            padding: 3rem;
+        }
+        .no-data-section i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 1rem;
+        }
+        .no-data-section p {
+            font-size: 1.1rem;
+            color: #6c757d;
+        }
+        .view-all-btn {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        .view-all-btn a {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .view-all-btn a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
     </style>
 </head>
 
 <th:block layout:fragment="content">
 
-
+    <!-- Welcome Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="welcome-section">
+                <h1>🏆 Selamat Datang di Sistem Penilaian Karyawan</h1>
+                <p>Lihat peringkat karyawan terbaik bulan ini</p>
+            </div>
+        </div>
     </div>
 
+    <!-- Top 3 Rankings Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="header-title mb-3 text-center">
+                        <i class="ti ti-trophy me-2"></i>
+                        Peringkat Karyawan Terbaik -
+                        <span th:switch="${currentBulan}">
+                            <span th:case="1">Januari</span>
+                            <span th:case="2">Februari</span>
+                            <span th:case="3">Maret</span>
+                            <span th:case="4">April</span>
+                            <span th:case="5">Mei</span>
+                            <span th:case="6">Juni</span>
+                            <span th:case="7">Juli</span>
+                            <span th:case="8">Agustus</span>
+                            <span th:case="9">September</span>
+                            <span th:case="10">Oktober</span>
+                            <span th:case="11">November</span>
+                            <span th:case="12">Desember</span>
+                        </span>
+                        <span th:text="${currentTahun}">2026</span>
+                    </h4>
 
+                    <!-- Info badge when showing data from previous month -->
+                    <div th:if="${!isCurrentMonth}" class="alert alert-info text-center" role="alert">
+                        <i class="ti ti-info-circle me-2"></i>
+                        Menampilkan data bulan
+                        <strong>
+                            <span th:switch="${currentBulan}">
+                                <span th:case="1">Januari</span>
+                                <span th:case="2">Februari</span>
+                                <span th:case="3">Maret</span>
+                                <span th:case="4">April</span>
+                                <span th:case="5">Mei</span>
+                                <span th:case="6">Juni</span>
+                                <span th:case="7">Juli</span>
+                                <span th:case="8">Agustus</span>
+                                <span th:case="9">September</span>
+                                <span th:case="10">Oktober</span>
+                                <span th:case="11">November</span>
+                                <span th:case="12">Desember</span>
+                            </span>
+                            <span th:text="${currentTahun}">2026</span>
+                        </strong>
+                        karena belum ada data penilaian untuk bulan ini
+                    </div>
 
+                    <div th:if="${top3Peringkat != null && !top3Peringkat.isEmpty()}">
+                        <div class="podium-container">
+                            <!-- Rank 2 (Left) -->
+                            <div class="podium-item podium-rank-2" th:if="${top3Peringkat.size() >= 2}">
+                                <div class="podium-medal">🥈</div>
+                                <div th:with="penilaian=${top3Peringkat[1]}">
+                                    <div class="podium-avatar" th:text="${#strings.substring(penilaian.karyawan.namaKaryawan, 0, 1)}">A</div>
+                                    <div class="podium-base">
+                                        <div class="podium-name" th:text="${penilaian.karyawan.namaKaryawan}">Nama Karyawan</div>
+                                        <div class="podium-details" th:text="${penilaian.divisi.namaDivisi}">Divisi</div>
+                                        <div class="podium-details" th:text="${penilaian.jabatan.namaJabatan}">Jabatan</div>
+                                        <div class="podium-score" th:text="${#numbers.formatDecimal(penilaian.nilaiRataRata, 1, 2)}">4.85</div>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <!-- Rank 1 (Center) -->
+                            <div class="podium-item podium-rank-1" th:if="${top3Peringkat.size() >= 1}">
+                                <div class="podium-medal">🥇</div>
+                                <div th:with="penilaian=${top3Peringkat[0]}">
+                                    <div class="podium-avatar" th:text="${#strings.substring(penilaian.karyawan.namaKaryawan, 0, 1)}">A</div>
+                                    <div class="podium-base">
+                                        <div class="podium-name" th:text="${penilaian.karyawan.namaKaryawan}">Nama Karyawan</div>
+                                        <div class="podium-details" th:text="${penilaian.divisi.namaDivisi}">Divisi</div>
+                                        <div class="podium-details" th:text="${penilaian.jabatan.namaJabatan}">Jabatan</div>
+                                        <div class="podium-score" th:text="${#numbers.formatDecimal(penilaian.nilaiRataRata, 1, 2)}">5.00</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rank 3 (Right) -->
+                            <div class="podium-item podium-rank-3" th:if="${top3Peringkat.size() >= 3}">
+                                <div class="podium-medal">🥉</div>
+                                <div th:with="penilaian=${top3Peringkat[2]}">
+                                    <div class="podium-avatar" th:text="${#strings.substring(penilaian.karyawan.namaKaryawan, 0, 1)}">A</div>
+                                    <div class="podium-base">
+                                        <div class="podium-name" th:text="${penilaian.karyawan.namaKaryawan}">Nama Karyawan</div>
+                                        <div class="podium-details" th:text="${penilaian.divisi.namaDivisi}">Divisi</div>
+                                        <div class="podium-details" th:text="${penilaian.jabatan.namaJabatan}">Jabatan</div>
+                                        <div class="podium-score" th:text="${#numbers.formatDecimal(penilaian.nilaiRataRata, 1, 2)}">4.75</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- View All Button -->
+<!--                        <div class="view-all-btn">-->
+<!--                            <a th:href="@{/pengumumanperingkat}">-->
+<!--                                <i class="ti ti-list me-2"></i>-->
+<!--                                Lihat Semua Peringkat-->
+<!--                            </a>-->
+<!--                        </div>-->
+                    </div>
+
+                    <!-- No Data Message -->
+                    <div th:if="${top3Peringkat == null || top3Peringkat.isEmpty()}" class="no-data-section">
+                        <i class="ti ti-mood-sad"></i>
+                        <p>Belum ada data penilaian untuk bulan ini</p>
+                        <p class="text-muted">Silakan lakukan penilaian karyawan terlebih dahulu</p>
+                        <div class="mt-3">
+                            <a th:href="@{/penilaiankaryawan}" class="btn btn-primary">
+                                <i class="ti ti-clipboard-check me-2"></i>
+                                Input Penilaian
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </th:block>
 
 <th:block layout:fragment="page_js">
-
-
+    <script>
+        $(document).ready(function() {
+            // Animation for podium items
+            $('.podium-item').each(function(index) {
+                $(this).css({
+                    'opacity': '0',
+                    'transform': 'translateY(20px)'
+                });
+                $(this).delay(index * 200).animate({
+                    'opacity': '1'
+                }, 500, function() {
+                    $(this).css('transform', 'translateY(0)');
+                });
+            });
+        });
+    </script>
 </th:block>
 
 </html>
