@@ -2,6 +2,7 @@ package id.co.lua.pbj.penilaian_karyawan.controller.apps;
 
 import id.co.lua.pbj.penilaian_karyawan.model.apps.Normalisasi;
 import id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan;
+import id.co.lua.pbj.penilaian_karyawan.model.dto.NilaiReferensiDTO;
 import id.co.lua.pbj.penilaian_karyawan.services.models.NormalisasiService;
 import id.co.lua.pbj.penilaian_karyawan.services.models.PenilaianKaryawanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +47,12 @@ public class PerhitunganSkwController {
         // 2. Normalisasi
         List<Normalisasi> normalisasiList = normalisasiService.getAllActiveNormalisasi();
 
-        // 3. Pengumuman Peringkat (ranking data)
-        List<PenilaianKaryawan> peringkatList = penilaianKaryawanService.getPeringkatByBulanAndTahun(bulan, tahun);
+        // 3. Nilai Referensi (normalisasi * bobot)
+        List<NilaiReferensiDTO> nilaiReferensiList = normalisasiService.calculateNilaiReferensiByBulanAndTahun(bulan, tahun);
 
         mView.addObject("penilaianList", penilaianList);
         mView.addObject("normalisasiList", normalisasiList);
-        mView.addObject("peringkatList", peringkatList);
+        mView.addObject("nilaiReferensiList", nilaiReferensiList);
         mView.addObject("selectedBulan", bulan);
         mView.addObject("selectedTahun", tahun);
         mView.setViewName("pages/perhitunganskw/perhitunganskw-index");

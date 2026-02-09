@@ -2,6 +2,7 @@ package id.co.lua.pbj.penilaian_karyawan.services.models;
 
 import id.co.lua.pbj.penilaian_karyawan.model.apps.Normalisasi;
 import id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan;
+import id.co.lua.pbj.penilaian_karyawan.model.dto.NilaiReferensiDTO;
 import id.co.lua.pbj.penilaian_karyawan.model.repositories.apps.NormalisasiRepository;
 import id.co.lua.pbj.penilaian_karyawan.model.repositories.apps.PenilaianKaryawanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,6 +149,24 @@ public class NormalisasiService {
 
         normalisasi.get().setStatusAktif(true);
         normalisasiRepository.save(normalisasi.get());
+    }
+
+    /**
+     * Calculate nilai referensi from normalisasi * bobot kriteria
+     * @return List of NilaiReferensiDTO
+     */
+    public List<NilaiReferensiDTO> calculateNilaiReferensi() {
+        return normalisasiRepository.calculateNilaiReferensi();
+    }
+
+    /**
+     * Calculate nilai referensi filtered by bulan and tahun
+     * @param bulan Bulan penilaian
+     * @param tahun Tahun penilaian
+     * @return List of NilaiReferensiDTO
+     */
+    public List<NilaiReferensiDTO> calculateNilaiReferensiByBulanAndTahun(Integer bulan, Integer tahun) {
+        return normalisasiRepository.calculateNilaiReferensiByBulanAndTahun(bulan, tahun);
     }
 
 

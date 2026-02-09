@@ -69,6 +69,31 @@
             margin: 0;
             color: white;
         }
+        .badge-hasil {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.7rem;
+            background-color: #17a2b8;
+            color: white;
+        }
+        .nilai-referensi-cell {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .small {
+            font-size: 0.75rem;
+        }
+        .alert-info {
+            background-color: #e7f3ff;
+            border-color: #b8daff;
+            color: #004085;
+        }
+        .table-no-data {
+            min-height: 200px;
+        }
+        .empty-state-icon {
+            font-size: 3rem;
+            color: #ccc;
+        }
     </style>
 </head>
 
@@ -208,7 +233,7 @@
                                     <th>K3 (N)</th>
                                     <th>K4 (N)</th>
                                     <th>K5 (N)</th>
-                                    <th>Total</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -253,10 +278,7 @@
                                         <span class="badge badge-normalisasi"
                                               th:text="${#numbers.formatDecimal(normalisasi.k5Normalisasi, 1, 2)}">0.00</span>
                                     </td>
-                                    <td class="text-center">
-                                        <span class="fw-bold text-success"
-                                              th:text="${#numbers.formatDecimal(normalisasi.totalNormalisasi, 1, 2)}">0.00</span>
-                                    </td>
+
                                 </tr>
                             </tbody>
                         </table>
@@ -266,68 +288,101 @@
         </div>
     </div>
 
-    <!-- Section 3: Pengumuman Peringkat -->
+    <!-- Section 3: Nilai Akhir (Nilai Referensi) -->
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="section-header">
-                        <h5><i class="ti ti-trophy me-2"></i>3. Nilai Akhir</h5>
+                        <h5><i class="ti ti-trophy me-2"></i>3. Nilai Akhir (Nilai Referensi)</h5>
+                    </div>
+                    <div class="alert alert-info" role="alert">
+                        <i class="ti ti-info-circle me-2"></i>
+                        <strong>Formula:</strong> Nilai Referensi = (K1 × Bobot K1) + (K2 × Bobot K2) + (K3 × Bobot K3) + (K4 × Bobot K4) + (K5 × Bobot K5)
                     </div>
                     <div class="table-responsive">
                         <table id="peringkatTable" class="table table-striped table-bordered dt-responsive nowrap w-100">
                             <thead>
                                 <tr>
                                     <th>Peringkat</th>
-                                    <th>Nama</th>
+                                    <th>Periode</th>
                                     <th>Divisi</th>
+                                    <th>Nama Karyawan</th>
                                     <th>Jabatan</th>
-                                    <th>Bulan</th>
-                                    <th>Total Bobot Penilaian</th>
+                                    <th>K1 × B1</th>
+                                    <th>K2 × B2</th>
+                                    <th>K3 × B3</th>
+                                    <th>K4 × B4</th>
+                                    <th>K5 × B5</th>
+                                    <th>Nilai Referensi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:if="${peringkatList == null || peringkatList.isEmpty()}">
-                                    <td colspan="6" class="text-center">
+                                <tr th:if="${nilaiReferensiList == null || nilaiReferensiList.isEmpty()}">
+                                    <td colspan="11" class="text-center">
                                         <div class="py-4">
                                             <i class="ti ti-database-off" style="font-size: 3rem; color: #ccc;"></i>
-                                            <p class="text-muted mt-2">Tidak ada data penilaian untuk bulan dan tahun yang dipilih</p>
+                                            <p class="text-muted mt-2">Belum ada data nilai referensi untuk periode yang dipilih</p>
+                                            <p class="text-muted">Silakan pilih bulan dan tahun, kemudian klik Filter</p>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr th:each="penilaian, iterStat : ${peringkatList}">
-                                    <td>
-                                        <span th:if="${iterStat.index == 0}" class="badge badge-rank rank-1">🥇 1</span>
-                                        <span th:if="${iterStat.index == 1}" class="badge badge-rank rank-2">🥈 2</span>
-                                        <span th:if="${iterStat.index == 2}" class="badge badge-rank rank-3">🥉 3</span>
-                                        <span th:if="${iterStat.index >= 3 && iterStat.index < 8}" class="badge bg-primary badge-rank" th:text="${iterStat.index + 1}"></span>
-                                        <span th:if="${iterStat.index >= 8 && iterStat.index < 14}" class="badge bg-info badge-rank" th:text="${iterStat.index + 1}"></span>
-                                        <span th:if="${iterStat.index >= 14}" class="badge bg-warning badge-rank" th:text="${iterStat.index + 1}"></span>
-                                    </td>
-                                    <td th:text="${penilaian.karyawan.namaKaryawan}">Nama Karyawan</td>
-                                    <td th:text="${penilaian.divisi.namaDivisi}">Divisi</td>
-                                    <td th:text="${penilaian.jabatan.namaJabatan}">Jabatan</td>
-                                    <td>
-                                        <span th:switch="${penilaian.bulan}">
-                                            <span th:case="1" th:text="'Januari ' + ${penilaian.tahun}">Januari 2026</span>
-                                            <span th:case="2" th:text="'Februari ' + ${penilaian.tahun}">Februari 2026</span>
-                                            <span th:case="3" th:text="'Maret ' + ${penilaian.tahun}">Maret 2026</span>
-                                            <span th:case="4" th:text="'April ' + ${penilaian.tahun}">April 2026</span>
-                                            <span th:case="5" th:text="'Mei ' + ${penilaian.tahun}">Mei 2026</span>
-                                            <span th:case="6" th:text="'Juni ' + ${penilaian.tahun}">Juni 2026</span>
-                                            <span th:case="7" th:text="'Juli ' + ${penilaian.tahun}">Juli 2026</span>
-                                            <span th:case="8" th:text="'Agustus ' + ${penilaian.tahun}">Agustus 2026</span>
-                                            <span th:case="9" th:text="'September ' + ${penilaian.tahun}">September 2026</span>
-                                            <span th:case="10" th:text="'Oktober ' + ${penilaian.tahun}">Oktober 2026</span>
-                                            <span th:case="11" th:text="'November ' + ${penilaian.tahun}">November 2026</span>
-                                            <span th:case="12" th:text="'Desember ' + ${penilaian.tahun}">Desember 2026</span>
-                                        </span>
+                                <tr th:each="nilai, iterStat : ${nilaiReferensiList}">
+                                    <td class="text-center">
+                                        <span class="badge badge-rank"
+                                              th:classappend="${iterStat.count == 1 ? 'rank-1' : (iterStat.count == 2 ? 'rank-2' : (iterStat.count == 3 ? 'rank-3' : 'bg-secondary'))}"
+                                              th:text="${iterStat.count}">1</span>
                                     </td>
                                     <td>
-                                        <strong th:if="${penilaian.nilaiRataRata >= 4.5}" class="text-success" th:text="${#numbers.formatDecimal(penilaian.nilaiRataRata, 1, 2)}">5.0</strong>
-                                        <strong th:if="${penilaian.nilaiRataRata >= 4.0 && penilaian.nilaiRataRata < 4.5}" class="text-primary" th:text="${#numbers.formatDecimal(penilaian.nilaiRataRata, 1, 2)}">4.5</strong>
-                                        <strong th:if="${penilaian.nilaiRataRata >= 3.0 && penilaian.nilaiRataRata < 4.0}" class="text-info" th:text="${#numbers.formatDecimal(penilaian.nilaiRataRata, 1, 2)}">3.5</strong>
-                                        <strong th:if="${penilaian.nilaiRataRata < 3.0}" class="text-warning" th:text="${#numbers.formatDecimal(penilaian.nilaiRataRata, 1, 2)}">2.5</strong>
+                                        <span th:text="${T(java.time.Month).of(nilai.bulan).getDisplayName(T(java.time.format.TextStyle).FULL, #locale)}">Januari</span>
+                                        <span th:text="${nilai.tahun}">2026</span>
+                                    </td>
+                                    <td th:text="${nilai.namaDivisi}">IT & Technology</td>
+                                    <td th:text="${nilai.namaKaryawan}">Ahmad Fauzi</td>
+                                    <td th:text="${nilai.namaJabatan}">Software Engineer</td>
+                                    <td class="text-center">
+                                        <span th:text="${#numbers.formatDecimal(nilai.hasilK1, 1, 2)}">0.00</span>
+                                        <br>
+                                        <small class="text-muted">
+                                            (<span th:text="${#numbers.formatDecimal(nilai.k1Normalisasi, 1, 2)}">0.00</span> ×
+                                            <span th:text="${nilai.bobotK1}">1</span>)
+                                        </small>
+                                    </td>
+                                    <td class="text-center">
+                                        <span th:text="${#numbers.formatDecimal(nilai.hasilK2, 1, 2)}">0.00</span>
+                                        <br>
+                                        <small class="text-muted">
+                                            (<span th:text="${#numbers.formatDecimal(nilai.k2Normalisasi, 1, 2)}">0.00</span> ×
+                                            <span th:text="${nilai.bobotK2}">2</span>)
+                                        </small>
+                                    </td>
+                                    <td class="text-center">
+                                        <span th:text="${#numbers.formatDecimal(nilai.hasilK3, 1, 2)}">0.00</span>
+                                        <br>
+                                        <small class="text-muted">
+                                            (<span th:text="${#numbers.formatDecimal(nilai.k3Normalisasi, 1, 2)}">0.00</span> ×
+                                            <span th:text="${nilai.bobotK3}">3</span>)
+                                        </small>
+                                    </td>
+                                    <td class="text-center">
+                                        <span th:text="${#numbers.formatDecimal(nilai.hasilK4, 1, 2)}">0.00</span>
+                                        <br>
+                                        <small class="text-muted">
+                                            (<span th:text="${#numbers.formatDecimal(nilai.k4Normalisasi, 1, 2)}">0.00</span> ×
+                                            <span th:text="${nilai.bobotK4}">4</span>)
+                                        </small>
+                                    </td>
+                                    <td class="text-center">
+                                        <span th:text="${#numbers.formatDecimal(nilai.hasilK5, 1, 2)}">0.00</span>
+                                        <br>
+                                        <small class="text-muted">
+                                            (<span th:text="${#numbers.formatDecimal(nilai.k5Normalisasi, 1, 2)}">0.00</span> ×
+                                            <span th:text="${nilai.bobotK5}">5</span>)
+                                        </small>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success fs-5 px-3 py-2"
+                                              th:text="${#numbers.formatDecimal(nilai.nilaiReferensi, 1, 2)}">0.00</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -429,28 +484,32 @@
                 responsive: true
             });
 
-            $('#peringkatTable').DataTable({
-                language: {
-                    lengthMenu: "Tampilkan _MENU_ data per halaman",
-                    zeroRecords: "Data tidak ditemukan",
-                    info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                    infoEmpty: "Tidak ada data yang tersedia",
-                    infoFiltered: "(difilter dari _MAX_ total data)",
-                    search: "Cari:",
-                    paginate: {
-                        first: "Pertama",
-                        last: "Terakhir",
-                        next: "Selanjutnya",
-                        previous: "Sebelumnya"
-                    }
-                },
-                pageLength: 10,
-                responsive: true,
-                order: [],
-                columnDefs: [
-                    { orderable: false, targets: 0 }
-                ]
-            });
+            // Only initialize DataTable for peringkatTable if there is data
+            var hasNilaiReferensiData = [[${nilaiReferensiList != null && !nilaiReferensiList.isEmpty()}]];
+            if (hasNilaiReferensiData) {
+                $('#peringkatTable').DataTable({
+                    language: {
+                        lengthMenu: "Tampilkan _MENU_ data per halaman",
+                        zeroRecords: "Data tidak ditemukan",
+                        info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                        infoEmpty: "Tidak ada data yang tersedia",
+                        infoFiltered: "(difilter dari _MAX_ total data)",
+                        search: "Cari:",
+                        paginate: {
+                            first: "Pertama",
+                            last: "Terakhir",
+                            next: "Selanjutnya",
+                            previous: "Sebelumnya"
+                        }
+                    },
+                    pageLength: 10,
+                    responsive: true,
+                    order: [],
+                    columnDefs: [
+                        { orderable: false, targets: 0 }
+                    ]
+                });
+            }
 
             // Handle form submission
             $('#filterForm').on('submit', function(e) {
