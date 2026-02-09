@@ -813,5 +813,105 @@ public class PdfGenerator {
 
         document.add(table);
     }
+
+    public static ByteArrayOutputStream generateNormalisasiReport(List<id.co.lua.pbj.penilaian_karyawan.model.apps.Normalisasi> normalisasiList,
+                                                                   String logoPath,
+                                                                   String companyName,
+                                                                   String companyAddress,
+                                                                   String printDate,
+                                                                   String directorName,
+                                                                   Integer tahun,
+                                                                   Integer bulan) throws DocumentException, IOException {
+
+        Document document = new Document(PageSize.A4.rotate(), 20, 20, 40, 20);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            // Add header with logo and company info
+            addHeader(document, logoPath, companyName, companyAddress);
+
+            // Add separator line
+            addSeparatorLine(document);
+
+            // Add title with tahun/bulan
+            String titleText = "LAPORAN DATA NORMALISASI PENILAIAN KARYAWAN";
+            if (tahun != null && bulan != null) {
+                String[] namaBulan = {"", "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                                     "Juli", "Agustus", "September", "Oktober", "November", "Desember"};
+                titleText += "\nPeriode: " + namaBulan[bulan] + " " + tahun;
+            } else if (tahun != null) {
+                titleText += "\nTahun: " + tahun;
+            }
+            addTitle(document, titleText);
+
+            // Add some space
+            document.add(new Paragraph(" "));
+
+            // Add table with normalisasi data
+            addNormalisasiTable(document, normalisasiList);
+
+            // Add signature section with less spacing
+            addSignatureCompact(document, printDate, directorName);
+
+            document.close();
+        } catch (Exception e) {
+            throw e;
+        }
+
+        return outputStream;
+    }
+
+    private static void addNormalisasiTable(Document document, List<id.co.lua.pbj.penilaian_karyawan.model.apps.Normalisasi> normalisasiList) throws DocumentException {
+        PdfPTable table = new PdfPTable(11);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        try {
+            table.setWidths(new float[]{0.7f, 2.5f, 1.8f, 1.8f, 1.5f, 1f, 1f, 1f, 1f, 1f, 1.2f});
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+
+        // Add table headers with smaller font
+        addTableHeaderSmall(table, "No");
+        addTableHeaderSmall(table, "Nama Karyawan");
+        addTableHeaderSmall(table, "Divisi");
+        addTableHeaderSmall(table, "Jabatan");
+        addTableHeaderSmall(table, "Periode");
+        addTableHeaderSmall(table, "K1");
+        addTableHeaderSmall(table, "K2");
+        addTableHeaderSmall(table, "K3");
+        addTableHeaderSmall(table, "K4");
+        addTableHeaderSmall(table, "K5");
+        addTableHeaderSmall(table, "Total");
+
+        // Add table data
+        int no = 1;
+        for (id.co.lua.pbj.penilaian_karyawan.model.apps.Normalisasi normalisasi : normalisasiList) {
+            addTableCellSmall(table, String.valueOf(no++), Element.ALIGN_CENTER);
+            addTableCellSmall(table, normalisasi.getKaryawan() != null ? normalisasi.getKaryawan().getNamaKaryawan() : "-", Element.ALIGN_LEFT);
+            addTableCellSmall(table, normalisasi.getDivisi() != null ? normalisasi.getDivisi().getNamaDivisi() : "-", Element.ALIGN_LEFT);
+            addTableCellSmall(table, normalisasi.getJabatan() != null ? normalisasi.getJabatan().getNamaJabatan() : "-", Element.ALIGN_LEFT);
+
+            String periode = "-";
+            if (normalisasi.getBulan() != null && normalisasi.getTahun() != null) {
+                periode = String.format("%02d/%d", normalisasi.getBulan(), normalisasi.getTahun());
+            }
+            addTableCellSmall(table, periode, Element.ALIGN_CENTER);
+
+            addTableCellSmall(table, normalisasi.getK1Normalisasi() != null ? String.format("%.2f", normalisasi.getK1Normalisasi()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, normalisasi.getK2Normalisasi() != null ? String.format("%.2f", normalisasi.getK2Normalisasi()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, normalisasi.getK3Normalisasi() != null ? String.format("%.2f", normalisasi.getK3Normalisasi()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, normalisasi.getK4Normalisasi() != null ? String.format("%.2f", normalisasi.getK4Normalisasi()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, normalisasi.getK5Normalisasi() != null ? String.format("%.2f", normalisasi.getK5Normalisasi()) : "-", Element.ALIGN_CENTER);
+            addTableCellSmall(table, normalisasi.getTotalNormalisasi() != null ? String.format("%.2f", normalisasi.getTotalNormalisasi()) : "-", Element.ALIGN_CENTER);
+        }
+
+        document.add(table);
+    }
 }
 

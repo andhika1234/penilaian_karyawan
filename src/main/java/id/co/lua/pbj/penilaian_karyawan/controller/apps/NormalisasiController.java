@@ -4,13 +4,21 @@ import id.co.lua.pbj.penilaian_karyawan.model.apps.Normalisasi;
 import id.co.lua.pbj.penilaian_karyawan.model.apps.Karyawan;
 import id.co.lua.pbj.penilaian_karyawan.services.models.NormalisasiService;
 import id.co.lua.pbj.penilaian_karyawan.services.models.KaryawanService;
+import id.co.lua.pbj.penilaian_karyawan.utils.PdfGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Controller
@@ -190,6 +198,61 @@ public class NormalisasiController {
         mView.addObject("bulan", bulan);
         mView.setViewName("pages/normalisasi/normalisasi-index");
         return mView;
+    }
+
+    @GetMapping("export/pdf")
+    public ResponseEntity<byte[]> exportPdf(@RequestParam(value = "tahun", required = false) Integer tahun,
+                                           @RequestParam(value = "bulan", required = false) Integer bulan,
+                                           @RequestParam(value = "karyawanId", required = false) Long karyawanId) {
+        try {
+            List<Normalisasi> normalisasiList;
+            String filename = "Laporan_Normalisasi";
+
+            // Filter data based on parameters
+            if (karyawanId != null) {
+                normalisasiList = normalisasiService.getNormalisasiByKaryawanId(karyawanId);
+                filename += "_Karyawan_" + karyawanId;
+            } else if (tahun != null && bulan != null) {
+                normalisasiList = normalisasiService.getNormalisasiByBulanAndTahun(bulan, tahun);
+                filename += "_" + String.format("%02d_%d", bulan, tahun);
+            } else if (tahun != null) {
+                normalisasiList = normalisasiService.getNormalisasiByTahun(tahun);
+                filename += "_" + tahun;
+            } else {
+                normalisasiList = normalisasiService.getAllActiveNormalisasi();
+                filename += "_Semua";
+            }
+
+            // Generate PDF
+            String logoPath = "/static/scholar-1.0.0/assets/images/perusahaan.png";
+            String companyName = "PT. Lua Indonesia";
+            String companyAddress = "Jln. Swadaya 1 No 52 B, RT.12/RW.10, Pejaten Timur , Pasar Minggu, Jakarta Selatan. 12510\nTelepon: 087881146327 | Email: luaindonesia@gmail.com";
+            String printDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy", new Locale("id", "ID")));
+            String directorName = "Ilyas. S.Kom, M.T.I";
+
+            ByteArrayOutputStream pdfStream = PdfGenerator.generateNormalisasiReport(
+                normalisasiList,
+                logoPath,
+                companyName,
+                companyAddress,
+                printDate,
+                directorName,
+                tahun,
+                bulan
+            );
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", filename + ".pdf");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(pdfStream.toByteArray());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
 
