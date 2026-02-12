@@ -15,7 +15,9 @@ import id.co.lua.pbj.penilaian_karyawan.utils.PdfGenerator;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping("penilaiankaryawan")
@@ -379,6 +382,60 @@ public class PenilaianKaryawanController {
         mView.addObject("bulan", bulan);
         mView.setViewName("pages/penilaiankaryawan/penilaiankaryawan-index");
         return mView;
+    }
+
+    @GetMapping("/api/karyawan/{id}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getKaryawanDetail(@PathVariable("id") Long id) {
+        try {
+            // Use method with JOIN FETCH to avoid LazyInitializationException
+            Optional<Karyawan> karyawanOpt = karyawanService.getKaryawanByIdWithRelations(id);
+
+            if (karyawanOpt.isPresent()) {
+                Karyawan k = karyawanOpt.get();
+
+                // Force initialization of lazy-loaded relationships
+                Long divisiId = null;
+                String divisiNama = null;
+                Long jabatanId = null;
+                String jabatanNama = null;
+
+                if (k.getDivisi() != null) {
+                    divisiId = k.getDivisi().getId();
+                    divisiNama = k.getDivisi().getNamaDivisi();
+                }
+
+                if (k.getJabatan() != null) {
+                    jabatanId = k.getJabatan().getId();
+                    jabatanNama = k.getJabatan().getNamaJabatan();
+                }
+
+                Map<String, Object> response = new java.util.HashMap<>();
+                response.put("success", true);
+                response.put("id", k.getId());
+                response.put("namaKaryawan", k.getNamaKaryawan());
+                response.put("divisiId", divisiId);
+                response.put("divisiNama", divisiNama);
+                response.put("jabatanId", jabatanId);
+                response.put("jabatanNama", jabatanNama);
+
+                System.out.println("Karyawan API Response: " + response);
+                return ResponseEntity.ok(response);
+            }
+
+            Map<String, Object> errorResponse = new java.util.HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Karyawan tidak ditemukan");
+            return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body(errorResponse);
+
+        } catch (Exception e) {
+            System.err.println("Error in getKaryawanDetail: " + e.getClass().getName() + " - " + e.getMessage());
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new java.util.HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Error: " + e.getMessage());
+            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
     @GetMapping("cetak-pdf")

@@ -141,27 +141,8 @@
                                 </div>
                             </div>
 
-                            <!-- Pilih Divisi -->
-                            <div class="col-md-6 mb-3">
-                                <label for="divisi" class="form-label">Divisi <span class="text-danger">*</span></label>
-                                <select class="form-control select2"
-                                        id="divisi"
-                                        name="divisiId"
-                                        data-placeholder="Pilih Divisi"
-                                        required>
-                                    <option value=""></option>
-                                    <option th:each="divisi : ${divisiList}"
-                                            th:value="${divisi.id}"
-                                            th:text="${divisi.namaDivisi}">
-                                    </option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    Divisi wajib dipilih
-                                </div>
-                            </div>
-
-                            <!-- Nama Karyawan -->
-                            <div class="col-md-6 mb-3">
+                            <!-- Nama Karyawan - HARUS DI ATAS untuk auto-fill -->
+                            <div class="col-md-12 mb-3">
                                 <label for="namaKaryawan" class="form-label">Nama Karyawan <span class="text-danger">*</span></label>
                                 <select class="form-control select2"
                                         id="namaKaryawan"
@@ -177,25 +158,39 @@
                                 <div class="invalid-feedback">
                                     Nama karyawan wajib dipilih
                                 </div>
+                                <small class="text-muted">Pilih karyawan terlebih dahulu, Divisi dan Jabatan akan terisi otomatis</small>
                             </div>
 
-                            <!-- Jabatan -->
-                            <div class="col-md-12 mb-3">
-                                <label for="jabatan" class="form-label">Jabatan <span class="text-danger">*</span></label>
-                                <select class="form-control select2"
-                                        id="jabatan"
-                                        name="jabatanId"
-                                        data-placeholder="Pilih Jabatan"
-                                        required>
-                                    <option value=""></option>
-                                    <option th:each="jabatan : ${jabatanList}"
-                                            th:value="${jabatan.id}"
-                                            th:text="${jabatan.namaJabatan}">
-                                    </option>
-                                </select>
+                            <!-- Divisi - AUTO-FILL dari Karyawan (READ-ONLY) -->
+                            <div class="col-md-6 mb-3">
+                                <label for="divisiNama" class="form-label">Divisi <span class="text-danger">*</span></label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="divisiNama"
+                                       placeholder="Pilih karyawan untuk auto-fill divisi"
+                                       readonly
+                                       style="background-color: #e9ecef;">
+                                <input type="hidden" id="divisiId" name="divisiId" required>
+                                <div class="invalid-feedback">
+                                    Divisi wajib dipilih
+                                </div>
+                                <small class="text-muted">Terisi otomatis dari data karyawan</small>
+                            </div>
+
+                            <!-- Jabatan - AUTO-FILL dari Karyawan (READ-ONLY) -->
+                            <div class="col-md-6 mb-3">
+                                <label for="jabatanNama" class="form-label">Jabatan <span class="text-danger">*</span></label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="jabatanNama"
+                                       placeholder="Pilih karyawan untuk auto-fill jabatan"
+                                       readonly
+                                       style="background-color: #e9ecef;">
+                                <input type="hidden" id="jabatanId" name="jabatanId" required>
                                 <div class="invalid-feedback">
                                     Jabatan wajib dipilih
                                 </div>
+                                <small class="text-muted">Terisi otomatis dari data karyawan</small>
                             </div>
 
                             <!-- Rating Penilaian per Kriteria -->
@@ -270,8 +265,12 @@
     <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <script>
+    <script th:inline="javascript">
         $(document).ready(function() {
+            // Get context path from Thymeleaf
+            const contextPath = /*[[@{/}]]*/ '/';
+            console.log('Context Path:', contextPath);
+
             // Populate year dropdown and set defaults
             const today = new Date();
             const currentYear = today.getFullYear();
@@ -287,15 +286,14 @@
             $('#bulan').val(currentMonth);
             $('#tahun').val(currentYear);
 
-            // Initialize Select2
-            $('.select2').select2({
+            // Initialize Select2 (only for Karyawan dropdown, not Divisi/Jabatan)
+            $('#namaKaryawan').select2({
                 theme: 'bootstrap-5',
                 width: '100%',
-                placeholder: function() {
-                    return $(this).data('placeholder');
-                },
+                placeholder: 'Pilih Nama Karyawan',
                 allowClear: true
             });
+
 
             // Form validation - SIMPLE VERSION
             const form = document.getElementById('formPenilaian');
@@ -321,9 +319,9 @@
                 }
 
                 // Check divisi
-                if (!$('#divisi').val()) {
-                    errorMessage += 'Divisi belum dipilih\n';
-                    $('#divisi').next('.select2-container').addClass('is-invalid');
+                if (!$('#divisiId').val()) {
+                    errorMessage += 'Divisi belum terisi (pilih karyawan terlebih dahulu)\n';
+                    $('#divisiNama').addClass('is-invalid');
                     isValid = false;
                 }
 
@@ -335,9 +333,9 @@
                 }
 
                 // Check jabatan
-                if (!$('#jabatan').val()) {
-                    errorMessage += 'Jabatan belum dipilih\n';
-                    $('#jabatan').next('.select2-container').addClass('is-invalid');
+                if (!$('#jabatanId').val()) {
+                    errorMessage += 'Jabatan belum terisi (pilih karyawan terlebih dahulu)\n';
+                    $('#jabatanNama').addClass('is-invalid');
                     isValid = false;
                 }
 
@@ -371,24 +369,140 @@
                 $(this).removeClass('is-invalid');
             });
 
-            $('.select2').on('change', function() {
+            $('#namaKaryawan').on('change', function() {
                 $(this).next('.select2-container').removeClass('is-invalid');
+            });
+
+            $('#divisiNama, #jabatanNama').on('input', function() {
+                $(this).removeClass('is-invalid');
+            });
+
+            // Auto-fill Divisi and Jabatan when Karyawan is selected
+            // Use 'change' event which works reliably with Select2
+            let isLoadingKaryawan = false; // Prevent multiple calls
+
+            $('#namaKaryawan').on('change', function() {
+                const karyawanId = $(this).val();
+
+                console.log('=== Karyawan Change Event ===');
+                console.log('Karyawan ID selected:', karyawanId);
+                console.log('Is Loading:', isLoadingKaryawan);
+
+                if (isLoadingKaryawan) {
+                    console.log('Already loading, skipping...');
+                    return;
+                }
+
+                if (karyawanId && karyawanId !== '') {
+                    isLoadingKaryawan = true;
+
+                    console.log('Starting AJAX call...');
+
+                    // Fetch karyawan details from API
+                    const apiUrl = contextPath + 'penilaiankaryawan/api/karyawan/' + karyawanId;
+                    console.log('API URL:', apiUrl);
+
+                    $.ajax({
+                        url: apiUrl,
+                        type: 'GET',
+                        dataType: 'json',
+                        cache: false,
+                        timeout: 10000, // 10 second timeout
+                        beforeSend: function() {
+                            console.log('AJAX request sent to:', apiUrl);
+                        },
+                        success: function(data) {
+                            console.log('=== AJAX Success ===');
+                            console.log('Response data:', data);
+
+                            if (data && data.success !== false) {
+                                // Set Divisi (both text display and hidden ID)
+                                if (data.divisiId && data.divisiNama) {
+                                    console.log('Setting Divisi ID:', data.divisiId, 'Nama:', data.divisiNama);
+                                    $('#divisiId').val(data.divisiId);
+                                    $('#divisiNama').val(data.divisiNama);
+                                    $('#divisiNama').removeClass('is-invalid');
+                                } else {
+                                    console.warn('No Divisi data in response');
+                                    $('#divisiId').val('');
+                                    $('#divisiNama').val('');
+                                }
+
+                                // Set Jabatan (both text display and hidden ID)
+                                if (data.jabatanId && data.jabatanNama) {
+                                    console.log('Setting Jabatan ID:', data.jabatanId, 'Nama:', data.jabatanNama);
+                                    $('#jabatanId').val(data.jabatanId);
+                                    $('#jabatanNama').val(data.jabatanNama);
+                                    $('#jabatanNama').removeClass('is-invalid');
+                                } else {
+                                    console.warn('No Jabatan data in response');
+                                    $('#jabatanId').val('');
+                                    $('#jabatanNama').val('');
+                                }
+
+                                console.log('Auto-fill completed successfully!');
+                            } else {
+                                console.error('API returned error:', data);
+                                alert('Gagal mengambil data karyawan: ' + (data && data.message ? data.message : 'Unknown error'));
+                            }
+
+                            isLoadingKaryawan = false;
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('=== AJAX Error ===');
+                            console.error('Status:', status);
+                            console.error('Error:', error);
+                            console.error('XHR Status:', xhr.status);
+                            console.error('XHR Response:', xhr.responseText);
+
+                            let errorMsg = 'Terjadi kesalahan saat mengambil data karyawan.';
+                            if (xhr.status === 404) {
+                                errorMsg = 'Endpoint API tidak ditemukan. Pastikan aplikasi sudah berjalan dengan benar.';
+                            } else if (xhr.status === 500) {
+                                errorMsg = 'Server error. Cek log aplikasi untuk detail.';
+                            } else if (status === 'timeout') {
+                                errorMsg = 'Request timeout. Coba lagi.';
+                            }
+
+                            alert(errorMsg + '\n\nDetail: ' + error);
+                            isLoadingKaryawan = false;
+                        },
+                        complete: function() {
+                            console.log('=== AJAX Complete ===');
+                            isLoadingKaryawan = false;
+                        }
+                    });
+                } else {
+                    // Clear Divisi and Jabatan if no karyawan selected
+                    console.log('Clearing Divisi and Jabatan');
+                    $('#divisiId').val('');
+                    $('#divisiNama').val('');
+                    $('#jabatanId').val('');
+                    $('#jabatanNama').val('');
+                }
             });
 
             // Reset form
             $('#resetBtn').on('click', function(e) {
                 e.preventDefault();
 
-                // Reset Select2
-                $('.select2').val(null).trigger('change');
+                // Reset Select2 (Karyawan)
+                $('#namaKaryawan').val(null).trigger('change');
+
+                // Clear Divisi and Jabatan
+                $('#divisiId').val('');
+                $('#divisiNama').val('');
+                $('#jabatanId').val('');
+                $('#jabatanNama').val('');
 
                 // Remove validation
                 $('.select2-container').removeClass('is-invalid');
-                $('#bulan, #tahun').removeClass('is-invalid');
+                $('#bulan, #tahun, #divisiNama, #jabatanNama').removeClass('is-invalid');
 
                 // Reset to current month/year
                 $('#bulan').val(currentMonth);
                 $('#tahun').val(currentYear);
+
 
                 // Reset ratings
                 $('.star').removeClass('filled');

@@ -43,5 +43,8 @@ public interface KaryawanRepository extends JpaRepository<Karyawan, Long> {
 
     @Query("SELECT COUNT(k) FROM Karyawan k WHERE k.emailKaryawan = :email AND k.id <> :id")
     int countByEmailExcludingId(@Param("email") String email, @Param("id") Long id);
+
+    @Query("SELECT k FROM Karyawan k LEFT JOIN FETCH k.divisi LEFT JOIN FETCH k.jabatan WHERE k.id = :id")
+    Optional<Karyawan> findByIdWithDivisiAndJabatan(@Param("id") Long id);
 }
 

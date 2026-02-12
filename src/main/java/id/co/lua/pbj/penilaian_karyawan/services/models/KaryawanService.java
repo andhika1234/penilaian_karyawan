@@ -28,6 +28,13 @@ public interface KaryawanService {
     Optional<Karyawan> getKaryawanById(Long id);
 
     /**
+     * Get karyawan by ID with Divisi and Jabatan eagerly loaded
+     * @param id Karyawan ID
+     * @return Optional Karyawan with Divisi and Jabatan
+     */
+    Optional<Karyawan> getKaryawanByIdWithRelations(Long id);
+
+    /**
      * Get karyawan by NIK
      * @param nik NIK
      * @return Optional Karyawan

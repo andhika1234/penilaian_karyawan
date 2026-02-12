@@ -37,6 +37,12 @@ public class KaryawanServiceImpl implements KaryawanService {
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<Karyawan> getKaryawanByIdWithRelations(Long id) {
+        return karyawanRepository.findByIdWithDivisiAndJabatan(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<Karyawan> getKaryawanByNik(String nik) {
         return karyawanRepository.findByNik(nik);
     }
