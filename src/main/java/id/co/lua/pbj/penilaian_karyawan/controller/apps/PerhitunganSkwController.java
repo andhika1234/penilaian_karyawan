@@ -123,7 +123,7 @@ public class PerhitunganSkwController {
             List<NilaiReferensiDTO> nilaiReferensiList = normalisasiService.calculateNilaiReferensiByTahun(tahun);
 
             // Get current date for print date
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy EEEE", new Locale("id", "ID"));
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", new Locale("id", "ID"));
             String printDate = LocalDate.now().format(dateFormatter);
 
             // Generate PDF with all 3 tables

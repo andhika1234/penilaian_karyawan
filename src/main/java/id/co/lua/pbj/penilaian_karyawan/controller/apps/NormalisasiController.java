@@ -227,7 +227,7 @@ public class NormalisasiController {
             String logoPath = "/static/scholar-1.0.0/assets/images/perusahaan.png";
             String companyName = "PT. Lua Indonesia";
             String companyAddress = "Jln. Swadaya 1 No 52 B, RT.12/RW.10, Pejaten Timur , Pasar Minggu, Jakarta Selatan. 12510\nTelepon: 087881146327 | Email: luaindonesia@gmail.com";
-            String printDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy EEEE", new Locale("id", "ID")));
+            String printDate = LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", new Locale("id", "ID")));
             String directorName = "Ilyas. S.Kom, M.T.I";
 
             ByteArrayOutputStream pdfStream = PdfGenerator.generateNormalisasiReport(
