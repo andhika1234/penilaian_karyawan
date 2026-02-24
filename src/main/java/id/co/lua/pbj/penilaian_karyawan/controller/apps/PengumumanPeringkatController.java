@@ -72,7 +72,7 @@ public class PengumumanPeringkatController {
             String logoPath = "/static/scholar-1.0.0/assets/images/perusahaan.png";
 
             // Get current date for signature
-            SimpleDateFormat dateFormatSignature = new SimpleDateFormat("EEEE, dd MMMM yyyy", new Locale("id", "ID"));
+            SimpleDateFormat dateFormatSignature = new SimpleDateFormat("EEEE dd MMMM yyyy", new Locale("id", "ID"));
             String printDate = dateFormatSignature.format(new Date());
 
             // Director information

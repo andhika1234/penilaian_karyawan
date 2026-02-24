@@ -450,7 +450,7 @@ public class PenilaianKaryawanController {
             String logoPath = "/static/scholar-1.0.0/assets/images/perusahaan.png"; // Adjust path as needed
 
             // Get current date for signature
-            SimpleDateFormat dateFormatSignature = new SimpleDateFormat("EEEE, dd MMMM yyyy", new Locale("id", "ID"));
+            SimpleDateFormat dateFormatSignature = new SimpleDateFormat("EEEE dd MMMM yyyy", new Locale("id", "ID"));
             String printDate = dateFormatSignature.format(new Date());
 
             // Director information
