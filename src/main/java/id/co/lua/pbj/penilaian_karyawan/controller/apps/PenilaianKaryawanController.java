@@ -1,5 +1,6 @@
 package id.co.lua.pbj.penilaian_karyawan.controller.apps;
 
+import id.co.lua.pbj.penilaian_karyawan.helpers.GlobalMethods;
 import id.co.lua.pbj.penilaian_karyawan.model.apps.DetailPenilaian;
 import id.co.lua.pbj.penilaian_karyawan.model.apps.Divisi;
 import id.co.lua.pbj.penilaian_karyawan.model.apps.Jabatan;
@@ -170,8 +171,8 @@ public class PenilaianKaryawanController {
             redirectAttributes.addFlashAttribute("resultCode", "success");
             redirectAttributes.addFlashAttribute("resultMessage", "Data penilaian berhasil disimpan");
         } catch (IllegalArgumentException e) {
+            GlobalMethods.setRedirectAttribute(redirectAttributes, "0", ""  , e.getMessage(), null );
             redirectAttributes.addFlashAttribute("resultCode", "error");
-            redirectAttributes.addFlashAttribute("resultMessage", e.getMessage());
             return "redirect:/penilaiankaryawan/tambah";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("resultCode", "error");

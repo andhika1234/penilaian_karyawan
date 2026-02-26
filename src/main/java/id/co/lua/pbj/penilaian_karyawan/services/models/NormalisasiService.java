@@ -76,14 +76,16 @@ public class NormalisasiService {
         } else {
             normalisasi = new Normalisasi();
             normalisasi.setPenilaianKaryawan(penilaian);
-            normalisasi.setKaryawan(penilaian.getKaryawan());
-            normalisasi.setDivisi(penilaian.getDivisi());
-            normalisasi.setJabatan(penilaian.getJabatan());
-            normalisasi.setBulan(penilaian.getBulan());
-            normalisasi.setTahun(penilaian.getTahun());
-            normalisasi.setTanggalPenilaian(penilaian.getTanggalPenilaian() != null ? penilaian.getTanggalPenilaian() : LocalDate.now());
-            normalisasi.setCatatan(penilaian.getCatatan());
         }
+
+        // Always update all fields (handles both create and update after edit penilaian)
+        normalisasi.setKaryawan(penilaian.getKaryawan());
+        normalisasi.setDivisi(penilaian.getDivisi());
+        normalisasi.setJabatan(penilaian.getJabatan());
+        normalisasi.setBulan(penilaian.getBulan());
+        normalisasi.setTahun(penilaian.getTahun());
+        normalisasi.setTanggalPenilaian(penilaian.getTanggalPenilaian() != null ? penilaian.getTanggalPenilaian() : LocalDate.now());
+        normalisasi.setCatatan(penilaian.getCatatan());
 
         // Calculate normalized values (nilai / 5)
         normalisasi.setK1Normalisasi(Normalisasi.normalizeValue(penilaian.getK1()));

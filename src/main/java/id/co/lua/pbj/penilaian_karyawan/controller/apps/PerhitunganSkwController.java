@@ -43,6 +43,7 @@ public class PerhitunganSkwController {
 
     @GetMapping("")
     public ModelAndView index(ModelAndView mView,
+                              @RequestParam(value = "bulan", required = false) Integer bulan,
                               @RequestParam(value = "tahun", required = false) Integer tahun,
                               @ModelAttribute(name = "resultCode") String resultCode,
                               @ModelAttribute(name = "resultMessage") String resultMessage) {
@@ -53,19 +54,25 @@ public class PerhitunganSkwController {
             tahun = now.getYear();
         }
 
-        // Get data from all three sources
-        // 1. Penilaian Karyawan
-        List<PenilaianKaryawan> penilaianList = penilaianKaryawanService.getAllActivePenilaian();
+        // Get data filtered by bulan+tahun if bulan is selected, otherwise by tahun only
+        List<PenilaianKaryawan> penilaianList;
+        List<Normalisasi> normalisasiList;
+        List<NilaiReferensiDTO> nilaiReferensiList;
 
-        // 2. Normalisasi
-        List<Normalisasi> normalisasiList = normalisasiService.getAllActiveNormalisasi();
-
-        // 3. Nilai Referensi (normalisasi * bobot) - filtered by year only
-        List<NilaiReferensiDTO> nilaiReferensiList = normalisasiService.calculateNilaiReferensiByTahun(tahun);
+        if (bulan != null) {
+            penilaianList = penilaianKaryawanService.getPenilaianByBulanAndTahun(bulan, tahun);
+            normalisasiList = normalisasiService.getNormalisasiByBulanAndTahun(bulan, tahun);
+            nilaiReferensiList = normalisasiService.calculateNilaiReferensiByBulanAndTahun(bulan, tahun);
+        } else {
+            penilaianList = penilaianKaryawanService.getAllActivePenilaian();
+            normalisasiList = normalisasiService.getAllActiveNormalisasi();
+            nilaiReferensiList = normalisasiService.calculateNilaiReferensiByTahun(tahun);
+        }
 
         mView.addObject("penilaianList", penilaianList);
         mView.addObject("normalisasiList", normalisasiList);
         mView.addObject("nilaiReferensiList", nilaiReferensiList);
+        mView.addObject("selectedBulan", bulan);
         mView.addObject("selectedTahun", tahun);
         mView.setViewName("pages/perhitunganskw/perhitunganskw-index");
         return mView;
@@ -104,7 +111,8 @@ public class PerhitunganSkwController {
     }
 
     @GetMapping("export-pdf")
-    public ResponseEntity<byte[]> exportPdf(@RequestParam(value = "tahun", required = false) Integer tahun) {
+    public ResponseEntity<byte[]> exportPdf(@RequestParam(value = "bulan", required = false) Integer bulan,
+                                            @RequestParam(value = "tahun", required = false) Integer tahun) {
         try {
             // Set default to current year if not provided
             if (tahun == null) {
@@ -112,15 +120,19 @@ public class PerhitunganSkwController {
                 tahun = now.getYear();
             }
 
-            // Get all three data lists
-            // 1. Penilaian Karyawan
-            List<PenilaianKaryawan> penilaianList = penilaianKaryawanService.getAllActivePenilaian();
+            List<PenilaianKaryawan> penilaianList;
+            List<Normalisasi> normalisasiList;
+            List<NilaiReferensiDTO> nilaiReferensiList;
 
-            // 2. Normalisasi
-            List<Normalisasi> normalisasiList = normalisasiService.getAllActiveNormalisasi();
-
-            // 3. Nilai Referensi (filtered by year)
-            List<NilaiReferensiDTO> nilaiReferensiList = normalisasiService.calculateNilaiReferensiByTahun(tahun);
+            if (bulan != null) {
+                penilaianList = penilaianKaryawanService.getPenilaianByBulanAndTahun(bulan, tahun);
+                normalisasiList = normalisasiService.getNormalisasiByBulanAndTahun(bulan, tahun);
+                nilaiReferensiList = normalisasiService.calculateNilaiReferensiByBulanAndTahun(bulan, tahun);
+            } else {
+                penilaianList = penilaianKaryawanService.getAllActivePenilaian();
+                normalisasiList = normalisasiService.getAllActiveNormalisasi();
+                nilaiReferensiList = normalisasiService.calculateNilaiReferensiByTahun(tahun);
+            }
 
             // Get current date for print date
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy", new Locale("id", "ID"));
@@ -142,7 +154,10 @@ public class PerhitunganSkwController {
             // Prepare response
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("attachment", "Laporan_Perhitungan_SKW_" + tahun + ".pdf");
+            String fileName = bulan != null
+                    ? "Laporan_Perhitungan_SKW_" + bulan + "_" + tahun + ".pdf"
+                    : "Laporan_Perhitungan_SKW_" + tahun + ".pdf";
+            headers.setContentDispositionFormData("attachment", fileName);
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 
             return ResponseEntity.ok()

@@ -1,8 +1,10 @@
 package id.co.lua.pbj.penilaian_karyawan.services.models;
 
 import id.co.lua.pbj.penilaian_karyawan.model.apps.Karyawan;
+import id.co.lua.pbj.penilaian_karyawan.model.apps.Normalisasi;
 import id.co.lua.pbj.penilaian_karyawan.model.apps.PenilaianKaryawan;
 import id.co.lua.pbj.penilaian_karyawan.model.dto.RekapTahunanDTO;
+import id.co.lua.pbj.penilaian_karyawan.model.repositories.apps.NormalisasiRepository;
 import id.co.lua.pbj.penilaian_karyawan.model.repositories.apps.PenilaianKaryawanRepository;
 import id.co.lua.pbj.penilaian_karyawan.model.repositories.apps.KaryawanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class PenilaianKaryawanServiceImpl implements PenilaianKaryawanService {
 
     @Autowired
     private KaryawanRepository karyawanRepository;
+
+    @Autowired
+    private NormalisasiRepository normalisasiRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -101,6 +106,9 @@ public class PenilaianKaryawanServiceImpl implements PenilaianKaryawanService {
             penilaian.setStatusAktif(true);
         }
 
+        // Explicitly set tanggalPenilaian from bulan & tahun
+        penilaian.setTanggalPenilaian(java.time.LocalDate.of(penilaian.getTahun(), penilaian.getBulan(), 1));
+
         return penilaianKaryawanRepository.save(penilaian);
     }
 
@@ -135,6 +143,8 @@ public class PenilaianKaryawanServiceImpl implements PenilaianKaryawanService {
         updateData.setBulan(penilaian.getBulan());
         updateData.setTahun(penilaian.getTahun());
         updateData.setCatatan(penilaian.getCatatan());
+        // Explicitly update tanggalPenilaian to ensure it reflects the new bulan & tahun
+        updateData.setTanggalPenilaian(java.time.LocalDate.of(penilaian.getTahun(), penilaian.getBulan(), 1));
 
         // Clear existing detail and add new ones
         updateData.getDetailPenilaianList().clear();
@@ -144,7 +154,28 @@ public class PenilaianKaryawanServiceImpl implements PenilaianKaryawanService {
             }
         }
 
-        return penilaianKaryawanRepository.save(updateData);
+        PenilaianKaryawan saved = penilaianKaryawanRepository.save(updateData);
+
+        // Auto-sync normalisasi if it already exists for this penilaian
+        Optional<Normalisasi> existingNormalisasi = normalisasiRepository.findByPenilaianKaryawanId(id);
+        existingNormalisasi.ifPresent(n -> {
+            n.setKaryawan(saved.getKaryawan());
+            n.setDivisi(saved.getDivisi());
+            n.setJabatan(saved.getJabatan());
+            n.setBulan(saved.getBulan());
+            n.setTahun(saved.getTahun());
+            n.setTanggalPenilaian(saved.getTanggalPenilaian());
+            n.setCatatan(saved.getCatatan());
+            n.setK1Normalisasi(Normalisasi.normalizeValue(saved.getK1()));
+            n.setK2Normalisasi(Normalisasi.normalizeValue(saved.getK2()));
+            n.setK3Normalisasi(Normalisasi.normalizeValue(saved.getK3()));
+            n.setK4Normalisasi(Normalisasi.normalizeValue(saved.getK4()));
+            n.setK5Normalisasi(Normalisasi.normalizeValue(saved.getK5()));
+            n.calculateTotalNormalisasi();
+            normalisasiRepository.save(n);
+        });
+
+        return saved;
     }
 
     @Override
@@ -159,6 +190,13 @@ public class PenilaianKaryawanServiceImpl implements PenilaianKaryawanService {
         PenilaianKaryawan data = penilaian.get();
         data.setStatusAktif(false);
         penilaianKaryawanRepository.save(data);
+
+        // Also soft delete related normalisasi
+        Optional<Normalisasi> normalisasi = normalisasiRepository.findByPenilaianKaryawanId(id);
+        normalisasi.ifPresent(n -> {
+            n.setStatusAktif(false);
+            normalisasiRepository.save(n);
+        });
     }
 
     @Override
@@ -183,6 +221,13 @@ public class PenilaianKaryawanServiceImpl implements PenilaianKaryawanService {
         PenilaianKaryawan data = penilaian.get();
         data.setStatusAktif(true);
         penilaianKaryawanRepository.save(data);
+
+        // Also re-activate related normalisasi
+        Optional<Normalisasi> normalisasi = normalisasiRepository.findByPenilaianKaryawanId(id);
+        normalisasi.ifPresent(n -> {
+            n.setStatusAktif(true);
+            normalisasiRepository.save(n);
+        });
     }
 
     @Override

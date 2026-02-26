@@ -40,6 +40,8 @@ public interface NormalisasiRepository extends JpaRepository<Normalisasi, Long> 
 
     boolean existsByPenilaianKaryawanIdAndStatusAktifTrue(Long penilaianKaryawanId);
 
+    Optional<Normalisasi> findByPenilaianKaryawanId(Long penilaianKaryawanId);
+
 
     @Query("SELECT AVG(n.totalNormalisasi) FROM Normalisasi n " +
            "WHERE n.karyawan.id = :karyawanId AND n.statusAktif = true")

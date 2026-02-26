@@ -55,7 +55,7 @@ public interface PenilaianKaryawanRepository extends JpaRepository<PenilaianKary
     List<PenilaianKaryawan> searchPenilaian(@Param("keyword") String keyword);
 
     @Query("SELECT COUNT(p) FROM PenilaianKaryawan p WHERE " +
-           "p.karyawan.id = :karyawanId AND p.bulan = :bulan AND p.tahun = :tahun")
+           "p.karyawan.id = :karyawanId AND p.bulan = :bulan AND p.tahun = :tahun AND p.statusAktif = true")
     int countByKaryawanAndBulanAndTahun(
         @Param("karyawanId") Long karyawanId,
         @Param("bulan") Integer bulan,
@@ -63,7 +63,7 @@ public interface PenilaianKaryawanRepository extends JpaRepository<PenilaianKary
     );
 
     @Query("SELECT COUNT(p) FROM PenilaianKaryawan p WHERE " +
-           "p.karyawan.id = :karyawanId AND p.bulan = :bulan AND p.tahun = :tahun AND p.id <> :id")
+           "p.karyawan.id = :karyawanId AND p.bulan = :bulan AND p.tahun = :tahun AND p.id <> :id AND p.statusAktif = true")
     int countByKaryawanAndBulanAndTahunExcludingId(
         @Param("karyawanId") Long karyawanId,
         @Param("bulan") Integer bulan,

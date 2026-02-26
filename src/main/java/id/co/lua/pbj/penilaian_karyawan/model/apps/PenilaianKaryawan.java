@@ -197,7 +197,10 @@ public class PenilaianKaryawan extends AuditModel {
             }
         }
 
-        if (tanggalPenilaian == null) {
+        // Set tanggalPenilaian based on bulan & tahun that the user selected, not today's date
+        if (bulan != null && tahun != null) {
+            tanggalPenilaian = LocalDate.of(tahun, bulan, 1);
+        } else if (tanggalPenilaian == null) {
             tanggalPenilaian = LocalDate.now();
         }
     }

@@ -109,18 +109,54 @@
     </div>
 
     <!-- Filter Section -->
-
     <div class="row mb-3">
         <div class="col-12">
-            <a th:href="@{/perhitunganskw/export-pdf(tahun=${selectedTahun})}"
-               class="btn btn-danger me-2">
-                <i class="ti ti-file-type-pdf me-1"></i>
-                Cetak PDF
-            </a>
-            <a th:href="@{/perhitunganskw/generate}" class="btn btn-success">
-                <i class="ti ti-calculator me-1"></i>
-                Generate Normalisasi
-            </a>
+            <div class="card">
+                <div class="card-body">
+                    <form id="filterForm" th:action="@{/perhitunganskw}" method="get" class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <label for="filterBulan" class="form-label fw-semibold">Bulan</label>
+                            <select id="filterBulan" name="bulan" class="form-select">
+                                <option value="">-- Semua Bulan --</option>
+                                <option value="1"  th:selected="${selectedBulan == 1}">Januari</option>
+                                <option value="2"  th:selected="${selectedBulan == 2}">Februari</option>
+                                <option value="3"  th:selected="${selectedBulan == 3}">Maret</option>
+                                <option value="4"  th:selected="${selectedBulan == 4}">April</option>
+                                <option value="5"  th:selected="${selectedBulan == 5}">Mei</option>
+                                <option value="6"  th:selected="${selectedBulan == 6}">Juni</option>
+                                <option value="7"  th:selected="${selectedBulan == 7}">Juli</option>
+                                <option value="8"  th:selected="${selectedBulan == 8}">Agustus</option>
+                                <option value="9"  th:selected="${selectedBulan == 9}">September</option>
+                                <option value="10" th:selected="${selectedBulan == 10}">Oktober</option>
+                                <option value="11" th:selected="${selectedBulan == 11}">November</option>
+                                <option value="12" th:selected="${selectedBulan == 12}">Desember</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filterTahun" class="form-label fw-semibold">Tahun</label>
+                            <input type="number" id="filterTahun" name="tahun" class="form-control"
+                                   th:value="${selectedTahun}" min="2020" max="2099" placeholder="Tahun"/>
+                        </div>
+                        <div class="col-md-auto">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ti ti-filter me-1"></i> Filter
+                            </button>
+                            <a th:href="@{/perhitunganskw(tahun=${selectedTahun})}" class="btn btn-secondary ms-1">
+                                <i class="ti ti-refresh me-1"></i> Reset
+                            </a>
+                        </div>
+                        <div class="col-md-auto ms-md-auto">
+                            <a th:href="@{/perhitunganskw/export-pdf(bulan=${selectedBulan}, tahun=${selectedTahun})}"
+                               class="btn btn-danger me-2">
+                                <i class="ti ti-file-type-pdf me-1"></i> Cetak PDF
+                            </a>
+                            <a th:href="@{/perhitunganskw/generate}" class="btn btn-success">
+                                <i class="ti ti-calculator me-1"></i> Generate Normalisasi
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -411,42 +447,6 @@
 
     <script>
         $(document).ready(function() {
-            /*
-            // Set default month to current month or selected month
-            var selectedBulan = [[${selectedBulan}]];
-            var selectedTahun = [[${selectedTahun}]];
-
-            if (selectedBulan && selectedTahun) {
-                var month = String(selectedBulan).padStart(2, '0');
-                $('#filterBulan').val(selectedTahun + '-' + month);
-                $('#bulanInput').val(selectedBulan);
-                $('#tahunInput').val(selectedTahun);
-            } else {
-                var today = new Date();
-                var year = today.getFullYear();
-                var month = String(today.getMonth() + 1).padStart(2, '0');
-                $('#filterBulan').val(year + '-' + month);
-                $('#bulanInput').val(today.getMonth() + 1);
-                $('#tahunInput').val(year);
-            }
-
-            // Function to update hidden fields from month input
-            function updateHiddenFields() {
-                var filterValue = $('#filterBulan').val();
-                if (filterValue) {
-                    var parts = filterValue.split('-');
-                    var year = parts[0];
-                    var month = parts[1];
-                    $('#bulanInput').val(parseInt(month, 10));
-                    $('#tahunInput').val(parseInt(year, 10));
-                }
-            }
-
-            // Update hidden fields when month input changes
-            $('#filterBulan').on('change', function() {
-                updateHiddenFields();
-            });
-            */
 
             // Initialize DataTables - Only if there is data
             $('#penilaianTable').DataTable({
@@ -518,25 +518,6 @@
                 });
             }
 
-            /*
-            // Handle form submission
-            $('#filterForm').on('submit', function(e) {
-                e.preventDefault();
-                updateHiddenFields();
-                this.submit();
-            });
-
-            // Reset button
-            $('#btnReset').on('click', function() {
-                var today = new Date();
-                var year = today.getFullYear();
-                var month = String(today.getMonth() + 1).padStart(2, '0');
-                $('#filterBulan').val(year + '-' + month);
-                $('#bulanInput').val(today.getMonth() + 1);
-                $('#tahunInput').val(year);
-                $('#filterForm').submit();
-            });
-            */
         });
     </script>
 </th:block>
