@@ -95,14 +95,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:if="${penilaianList == null || penilaianList.isEmpty()}">
-                                    <td colspan="11" class="text-center">
-                                        <div class="py-4">
-                                            <i class="ti ti-database-off" style="font-size: 3rem; color: #ccc;"></i>
-                                            <p class="text-muted mt-2">Belum ada data penilaian karyawan</p>
-                                        </div>
-                                    </td>
-                                </tr>
                                 <tr th:each="penilaian, iterStat : ${penilaianList}">
                                     <td th:text="${iterStat.count}">1</td>
                                     <td>
@@ -252,7 +244,7 @@
                 "responsive": true,
                 "order": [],
                 "columnDefs": [
-                    { "orderable": false, "targets": [7] } // Kolom Aksi tidak bisa di-sort
+                    { "orderable": false, "targets": [-1] } // Kolom Aksi tidak bisa di-sort
                 ],
                 "dom": '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>'+
                        '<"row"<"col-sm-12 col-md-6"B>>'+

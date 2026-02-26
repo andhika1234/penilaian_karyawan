@@ -203,14 +203,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:if="${penilaianList == null || penilaianList.isEmpty()}">
-                                    <td colspan="10" class="text-center">
-                                        <div class="py-4">
-                                            <i class="ti ti-database-off" style="font-size: 3rem; color: #ccc;"></i>
-                                            <p class="text-muted mt-2">Belum ada data penilaian karyawan</p>
-                                        </div>
-                                    </td>
-                                </tr>
                                 <tr th:each="penilaian, iterStat : ${penilaianList}">
                                     <td th:text="${iterStat.count}">1</td>
                                     <td>
@@ -274,18 +266,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:if="${normalisasiList == null || normalisasiList.isEmpty()}">
-                                    <td colspan="10" class="text-center">
-                                        <div class="py-4">
-                                            <i class="ti ti-database-off" style="font-size: 3rem; color: #ccc;"></i>
-                                            <p class="text-muted mt-2">Belum ada data normalisasi</p>
-                                            <a th:href="@{/perhitunganskw/generate}" class="btn btn-primary btn-sm mt-2">
-                                                <i class="ti ti-calculator me-1"></i>
-                                                Generate Data Normalisasi
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
                                 <tr th:each="normalisasi, iterStat : ${normalisasiList}">
                                     <td th:text="${iterStat.count}">1</td>
                                     <td>
@@ -359,15 +339,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:if="${nilaiReferensiList == null || nilaiReferensiList.isEmpty()}">
-                                    <td colspan="11" class="text-center">
-                                        <div class="py-4">
-                                            <i class="ti ti-database-off" style="font-size: 3rem; color: #ccc;"></i>
-                                            <p class="text-muted mt-2">Belum ada data nilai referensi</p>
-                                            <p class="text-muted">Silakan generate data normalisasi terlebih dahulu</p>
-                                        </div>
-                                    </td>
-                                </tr>
                                 <tr th:each="nilai, iterStat : ${nilaiReferensiList}">
                                     <td class="text-center" th:text="${iterStat.count}">1</td>
                                     <td>
@@ -448,75 +419,42 @@
     <script>
         $(document).ready(function() {
 
-            // Initialize DataTables - Only if there is data
+            var dtLanguage = {
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                zeroRecords: "Data tidak ditemukan",
+                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                infoEmpty: "Tidak ada data yang tersedia",
+                infoFiltered: "(difilter dari _MAX_ total data)",
+                search: "Cari:",
+                paginate: {
+                    first: "Pertama",
+                    last: "Terakhir",
+                    next: "Selanjutnya",
+                    previous: "Sebelumnya"
+                }
+            };
+
             $('#penilaianTable').DataTable({
-                language: {
-                    lengthMenu: "Tampilkan _MENU_ data per halaman",
-                    zeroRecords: "Data tidak ditemukan",
-                    info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                    infoEmpty: "Tidak ada data yang tersedia",
-                    infoFiltered: "(difilter dari _MAX_ total data)",
-                    search: "Cari:",
-                    paginate: {
-                        first: "Pertama",
-                        last: "Terakhir",
-                        next: "Selanjutnya",
-                        previous: "Sebelumnya"
-                    }
-                },
+                language: dtLanguage,
                 pageLength: 10,
                 responsive: true
             });
 
-            // Only initialize DataTable for normalisasiTable if there is data
-            var hasNormalisasiData = [[${normalisasiList != null && !normalisasiList.isEmpty()}]];
-            if (hasNormalisasiData) {
-                $('#normalisasiTable').DataTable({
-                    language: {
-                        lengthMenu: "Tampilkan _MENU_ data per halaman",
-                        zeroRecords: "Data tidak ditemukan",
-                        info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                        infoEmpty: "Tidak ada data yang tersedia",
-                        infoFiltered: "(difilter dari _MAX_ total data)",
-                        search: "Cari:",
-                        paginate: {
-                            first: "Pertama",
-                            last: "Terakhir",
-                            next: "Selanjutnya",
-                            previous: "Sebelumnya"
-                        }
-                    },
-                    pageLength: 10,
-                    responsive: true
-                });
-            }
+            $('#normalisasiTable').DataTable({
+                language: dtLanguage,
+                pageLength: 10,
+                responsive: true
+            });
 
-            // Only initialize DataTable for peringkatTable if there is data
-            var hasNilaiReferensiData = [[${nilaiReferensiList != null && !nilaiReferensiList.isEmpty()}]];
-            if (hasNilaiReferensiData) {
-                $('#peringkatTable').DataTable({
-                    language: {
-                        lengthMenu: "Tampilkan _MENU_ data per halaman",
-                        zeroRecords: "Data tidak ditemukan",
-                        info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                        infoEmpty: "Tidak ada data yang tersedia",
-                        infoFiltered: "(difilter dari _MAX_ total data)",
-                        search: "Cari:",
-                        paginate: {
-                            first: "Pertama",
-                            last: "Terakhir",
-                            next: "Selanjutnya",
-                            previous: "Sebelumnya"
-                        }
-                    },
-                    pageLength: 10,
-                    responsive: true,
-                    order: [],
-                    columnDefs: [
-                        { orderable: false, targets: 0 }
-                    ]
-                });
-            }
+            $('#peringkatTable').DataTable({
+                language: dtLanguage,
+                pageLength: 10,
+                responsive: true,
+                order: [],
+                columnDefs: [
+                    { orderable: false, targets: 0 }
+                ]
+            });
 
         });
     </script>
