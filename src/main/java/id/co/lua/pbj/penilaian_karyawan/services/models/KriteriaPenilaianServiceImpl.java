@@ -60,12 +60,32 @@ public class KriteriaPenilaianServiceImpl implements KriteriaPenilaianService {
 
     @Override
     public KriteriaPenilaian saveKriteria(KriteriaPenilaian kriteria) {
-        // Validate kode kriteria uniqueness
+        // Check if there is a soft-deleted record with the same kode kriteria -> reactivate it
+        Optional<KriteriaPenilaian> softDeletedByKode = kriteriaRepository.findSoftDeletedByKodeKriteria(kriteria.getKodeKriteria());
+        if (softDeletedByKode.isPresent()) {
+            KriteriaPenilaian existing = softDeletedByKode.get();
+            existing.setNamaKriteria(kriteria.getNamaKriteria());
+            existing.setBobot(kriteria.getBobot());
+            existing.setStatusAktif(true);
+            return kriteriaRepository.save(existing);
+        }
+
+        // Validate kode kriteria uniqueness (only against active records)
         if (isKodeKriteriaExists(kriteria.getKodeKriteria())) {
             throw new IllegalArgumentException("Kode kriteria sudah terdaftar");
         }
 
-        // Validate nama kriteria uniqueness
+        // Check if there is a soft-deleted record with the same nama kriteria -> reactivate it
+        Optional<KriteriaPenilaian> softDeletedByNama = kriteriaRepository.findSoftDeletedByNamaKriteria(kriteria.getNamaKriteria());
+        if (softDeletedByNama.isPresent()) {
+            KriteriaPenilaian existing = softDeletedByNama.get();
+            existing.setKodeKriteria(kriteria.getKodeKriteria());
+            existing.setBobot(kriteria.getBobot());
+            existing.setStatusAktif(true);
+            return kriteriaRepository.save(existing);
+        }
+
+        // Validate nama kriteria uniqueness (only against active records)
         if (isNamaKriteriaExists(kriteria.getNamaKriteria())) {
             throw new IllegalArgumentException("Nama kriteria sudah terdaftar");
         }

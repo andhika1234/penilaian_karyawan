@@ -29,16 +29,24 @@ public interface KriteriaPenilaianRepository extends JpaRepository<KriteriaPenil
            "LOWER(k.namaKriteria) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<KriteriaPenilaian> searchKriteria(@Param("keyword") String keyword);
 
-    @Query("SELECT COUNT(k) FROM KriteriaPenilaian k WHERE k.kodeKriteria = :kodeKriteria")
+    // Find soft-deleted record by kode/nama (for reactivation)
+    @Query("SELECT k FROM KriteriaPenilaian k WHERE k.kodeKriteria = :kodeKriteria AND k.statusAktif = false")
+    Optional<KriteriaPenilaian> findSoftDeletedByKodeKriteria(@Param("kodeKriteria") String kodeKriteria);
+
+    @Query("SELECT k FROM KriteriaPenilaian k WHERE k.namaKriteria = :namaKriteria AND k.statusAktif = false")
+    Optional<KriteriaPenilaian> findSoftDeletedByNamaKriteria(@Param("namaKriteria") String namaKriteria);
+
+    // Only count ACTIVE records for uniqueness validation
+    @Query("SELECT COUNT(k) FROM KriteriaPenilaian k WHERE k.kodeKriteria = :kodeKriteria AND k.statusAktif = true")
     int countByKodeKriteria(@Param("kodeKriteria") String kodeKriteria);
 
-    @Query("SELECT COUNT(k) FROM KriteriaPenilaian k WHERE k.namaKriteria = :namaKriteria")
+    @Query("SELECT COUNT(k) FROM KriteriaPenilaian k WHERE k.namaKriteria = :namaKriteria AND k.statusAktif = true")
     int countByNamaKriteria(@Param("namaKriteria") String namaKriteria);
 
-    @Query("SELECT COUNT(k) FROM KriteriaPenilaian k WHERE k.kodeKriteria = :kodeKriteria AND k.id <> :id")
+    @Query("SELECT COUNT(k) FROM KriteriaPenilaian k WHERE k.kodeKriteria = :kodeKriteria AND k.id <> :id AND k.statusAktif = true")
     int countByKodeKriteriaExcludingId(@Param("kodeKriteria") String kodeKriteria, @Param("id") Long id);
 
-    @Query("SELECT COUNT(k) FROM KriteriaPenilaian k WHERE k.namaKriteria = :namaKriteria AND k.id <> :id")
+    @Query("SELECT COUNT(k) FROM KriteriaPenilaian k WHERE k.namaKriteria = :namaKriteria AND k.id <> :id AND k.statusAktif = true")
     int countByNamaKriteriaExcludingId(@Param("namaKriteria") String namaKriteria, @Param("id") Long id);
 }
 
